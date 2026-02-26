@@ -54,6 +54,21 @@
     p{ margin:0; color:var(--muted); line-height:1.6; font-size:15px; }
     .center{ text-align:center; }
 
+    .backBtn{
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 9999;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--txt);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    .backBtn:active{ transform: scale(.98); }
+    
     .btnRow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
     button{
       appearance:none; border:none; cursor:pointer; user-select:none;
@@ -227,7 +242,7 @@
 
 <body>
 <div class="app" id="app">
-
+  <button id="backBtn" class="backBtn" style="display:none;">← Назад</button>
   <!-- 1: Welcome -->
   <section class="screen active" id="s1">
     <div class="card center">
@@ -447,10 +462,26 @@
   const screens = ["s1","s2","s3","s4","s5","s6","s7"].map($);
   const randItem = (arr) => arr[Math.floor(Math.random()*arr.length)];
 
+  // ====== Back navigation ======
+  let historyStack = ["s1"];
+  
   function showScreen(id){
     screens.forEach(s => s.classList.toggle("active", s.id === id));
     if (navigator.vibrate) navigator.vibrate(10);
+  
+    const last = historyStack[historyStack.length - 1];
+    if (last !== id) historyStack.push(id);
+  
+    $("backBtn").style.display = historyStack.length > 1 ? "inline-block" : "none";
   }
+  
+  $("backBtn").onclick = () => {
+    if(historyStack.length <= 1) return;
+    historyStack.pop(); // текущий
+    const prev = historyStack[historyStack.length - 1];
+    screens.forEach(s => s.classList.toggle("active", s.id === prev));
+    $("backBtn").style.display = historyStack.length > 1 ? "inline-block" : "none";
+  };
 
   // ====== Typing name ======
   const typeEl = $("typeName");
@@ -566,32 +597,27 @@
   updateTimers();
   setInterval(updateTimers, 1000);
 
-  // ====== Wheel (ALWAYS PURPLE + always spins) ======
-    let wheelAngle = 0;
-    
-    $("spinBtn").onclick = () => {
-      const btn = $("spinBtn");
-      btn.disabled = true;
-    
-      $("wheelResult").textContent = "Крутим судьбу...";
-      $("toQuizBtn").style.display = "none";
-    
-      // фиолетовый сектор у тебя 348..360, берём середину
-      const final = 354;
-    
-      // добавляем обороты + точный финал, чтобы всегда было фиолетовое
-      const extraTurns = 6 + Math.random() * 4; // 6..10 оборотов
-      wheelAngle += extraTurns * 360 + final;
-    
-      const wheel = $("wheel");
-      wheel.style.transform = `rotate(${wheelAngle}deg)`;
-    
-      setTimeout(() => {
-        $("wheelResult").textContent = "Вместе навсегда 💜 Никакая судьба не разлучит нас.";
-        $("toQuizBtn").style.display = "inline-block";
-        btn.disabled = false;
-      }, 4200);
-    };
+  // ====== Wheel: rotate only n*360 ======
+  let wheelAngle = 0;
+  
+  $("spinBtn").onclick = () => {
+    const btn = $("spinBtn");
+    btn.disabled = true;
+  
+    $("wheelResult").textContent = "Крутим...";
+    $("toQuizBtn").style.display = "none";
+  
+    const n = Math.floor(Math.random() * 6) + 4; // 4..9 оборотов
+    wheelAngle += n * 360;
+  
+    $("wheel").style.transform = `rotate(${wheelAngle}deg)`;
+  
+    setTimeout(() => {
+      $("wheelResult").textContent = "Итог один: вместе навсегда 💜";
+      $("toQuizBtn").style.display = "inline-block";
+      btn.disabled = false;
+    }, 4200);
+  };
 
   // ====== Quiz with traps (оставил как было) ======
   let qIndex = 0;
@@ -617,6 +643,8 @@
   const SLOT_ITEMS = ["❤️","💖","💋","🫂","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
 
   $("slotSpinBtn").onclick = () => {
+    const btn = $("slotSpinBtn");
+    btn.disabled = true;
     $("nextBtn").style.display = "none";
     $("payoutText").textContent = "Крутим…";
 
@@ -648,6 +676,7 @@
 
         $("payoutText").textContent = msg;
         $("nextBtn").style.display = "inline-block";
+        btn.disabled = false;
       }
     }, 80);
   };
