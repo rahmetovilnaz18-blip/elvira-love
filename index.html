@@ -237,14 +237,19 @@
 
     /* ===== Final screen effects ===== */
     #s8{
+            /* вместо absolute */
+      inset: 0;
+      padding: 0;           /* убираем отступы */
+      height: 100dvh;       /* правильная высота на мобилках */
+      width: 100vw;
       display:flex;
       align-items:center;
       justify-content:center;
-      position:relative;
+      position:fixed;
       overflow:hidden;
     }
     #s8 .card{
-      margin: 0 auto;
+      margin: auto;
       position:relative;
       z-index:2;
       /* усиливаем контраст — меньше "сливается" */
