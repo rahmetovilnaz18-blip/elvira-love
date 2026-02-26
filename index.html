@@ -154,8 +154,8 @@
       box-shadow: 0 24px 80px rgba(0,0,0,.45);
       /* визуально "почти всё розовое", но мы ВСЕГДА попадаем в фиолетовый */
       background: conic-gradient(
-        rgba(255,77,125,.85) 0deg 348deg,
-        rgba(122,92,255,.95) 348deg 360deg
+        rgba(122,92,255,.95) 0deg 12deg,        /* фиолетовый у стрелки */
+        rgba(255,77,125,.85) 12deg 360deg
       );
       transform: rotate(0deg);
       transition: transform 4.2s cubic-bezier(.12,.78,.15,1);
@@ -427,7 +427,7 @@
 <script>
   // ====== Settings ======
   const GIRL_NAME = "Эльвира";
-  const REL_START = "2024-10-13T00:00:00"; // 13.10.2024
+  const REL_START = "2024-10-13T21:45:00";
 
   const CONFESSIONS = [
     "Ты — мой уют.",
@@ -640,7 +640,7 @@
   $("ansNo").onclick = answer;
 
   // ====== Slot (NO PHOTOS) ======
-  const SLOT_ITEMS = ["❤️","💖","💋","🫂","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
+  const SLOT_ITEMS = ["❤️","💖","💋","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
 
   $("slotSpinBtn").onclick = () => {
     const btn = $("slotSpinBtn");
@@ -685,21 +685,35 @@
   $("spoilerBtn").onclick = () => {
     const box = $("scanBox");
     box.classList.add("loading");
-    box.innerHTML = `<div class="glitch">Генерация…</div>`;
-
-    setTimeout(() => {
-      const img = document.createElement("img");
-      img.src = randItem(FUTURE_IMAGES) + "?" + Date.now(); // anti-cache
-      img.onload = () => {
-        box.classList.remove("loading");
-        box.innerHTML = "";
-        box.appendChild(img);
-      };
-      img.onerror = () => {
-        box.classList.remove("loading");
-        box.innerHTML = `<div class="glitch">Не вижу future1/2/3 в assets 😅</div>`;
-      };
-    }, 900);
+  
+    let pct = 0;
+    box.innerHTML = `<div class="glitch" id="scanPct">Генерация… 0%</div>`;
+    const pctEl = () => document.getElementById("scanPct");
+  
+    const total = 2500 + Math.random() * 1500; // 2.5–4 сек
+    const start = Date.now();
+  
+    const timer = setInterval(() => {
+      const t = Date.now() - start;
+      pct = Math.min(99, Math.floor((t / total) * 100));
+      if (pctEl()) pctEl().textContent = `Генерация… ${pct}%`;
+      if (t >= total) {
+        clearInterval(timer);
+  
+        const img = document.createElement("img");
+        img.src = randItem(FUTURE_IMAGES) + "?" + Date.now();
+  
+        img.onload = () => {
+          box.classList.remove("loading");
+          box.innerHTML = "";
+          box.appendChild(img);
+        };
+        img.onerror = () => {
+          box.classList.remove("loading");
+          box.innerHTML = `<div class="glitch">Не вижу future1/2/3 в assets 😅</div>`;
+        };
+      }
+    }, 120);
   };
 
   // ====== Secret: only heart taps (5) ======
