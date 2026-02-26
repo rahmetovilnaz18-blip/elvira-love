@@ -238,6 +238,45 @@
       justify-content:center; align-items:center;
     }
     .overlay.show{ display:flex; }
+
+    /* ===== Final screen effects ===== */
+    #s8{ position:relative; overflow:hidden; }
+    #s8 .card{ position:relative; z-index:2; }
+    
+    .sky{
+      position:absolute; inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+    
+    .star{
+      position:absolute;
+      width:2px; height:2px;
+      background:rgba(255,255,255,.85);
+      border-radius:999px;
+      opacity:.8;
+      animation: twinkle 2.6s infinite ease-in-out;
+    }
+    
+    @keyframes twinkle{
+      0%,100%{ transform:scale(1); opacity:.55; }
+      50%{ transform:scale(1.6); opacity:1; }
+    }
+    
+    .floatHeart{
+      position:absolute;
+      font-size:18px;
+      opacity:.75;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
+      animation: floatUp linear forwards;
+    }
+    
+    @keyframes floatUp{
+      from{ transform: translateY(20px); opacity:0; }
+      10%{ opacity:.8; }
+      to{ transform: translateY(-120vh); opacity:0; }
+    }
+    
   </style>
 </head>
 
@@ -394,12 +433,28 @@
 
       <div class="btnRow">
         <button class="primary" id="spoilerBtn">Спойлер</button>
+        <button class="ghost" id="toEndBtn" style="display:none;">Дальше…</button>
       </div>
 
       <div class="tiny">P.S. секретный экран открывается сердечком ❤️ (нажми 5 раз)</div>
     </div>
   </section>
 
+  <!-- 8: Endless love -->
+  <section class="screen" id="s8">
+    <div class="sky" id="sky"></div>
+    <div class="card center">
+      <h2 id="lovePhrase">Я люблю тебя</h2>
+      <p style="margin-top:8px;">Я найду все разные способы сказать как я тебя люблю</p>
+      <div style="margin-top:14px; font-size:34px;">🤟</div>
+      <div class="tiny" id="signLabel">Язык жестов (ASL): “I love you”</div>
+  
+      <div class="btnRow">
+        <button class="ghost" id="restartBtn">Начать сначала</button>
+      </div>
+    </div>
+  </section>
+  
   <!-- Secret overlay -->
   <div class="overlay" id="secretOverlay">
     <div class="card center" style="max-width:720px;">
@@ -460,7 +515,7 @@
 
   // ====== Helpers ======
   const $ = (id) => document.getElementById(id);
-  const screens = ["s1","s2","s3","s4","s5","s6","s7"].map($);
+  const screens = ["s1","s2","s3","s4","s5","s6","s7","s8"].map($);
   const randItem = (arr) => arr[Math.floor(Math.random()*arr.length)];
 
   // ====== Back navigation ======
@@ -469,7 +524,8 @@
   function showScreen(id){
     screens.forEach(s => s.classList.toggle("active", s.id === id));
     if (navigator.vibrate) navigator.vibrate(10);
-  
+    if(id !== "s8") stopHearts();
+    
     const last = historyStack[historyStack.length - 1];
     if (last !== id) historyStack.push(id);
   
@@ -708,6 +764,10 @@
           box.classList.remove("loading");
           box.innerHTML = "";
           box.appendChild(img);
+
+          $("toEndBtn").style.opacity = "0";
+          $("toEndBtn").style.display = "inline-block";
+          setTimeout(()=> $("toEndBtn").style.opacity = "1", 50);
         };
         img.onerror = () => {
           box.classList.remove("loading");
@@ -737,6 +797,110 @@
       $("secretOverlay").classList.add("show");
       if (navigator.vibrate) navigator.vibrate([20,10,20]);
     }
+  };
+  // ====== Endless final screen ======
+  const LOVE_PHRASES = [
+    { t: "Я люблю тебя", l: "Русский" },
+    { t: "Мин һине яратам", l: "Башҡорт" },
+    { t: "I love you", l: "English" },
+    { t: "Je t’aime", l: "Français" },
+    { t: "Te amo", l: "Español" },
+    { t: "Ti amo", l: "Italiano" },
+    { t: "Ich liebe dich", l: "Deutsch" },
+    { t: "Eu te amo", l: "Português" },
+    { t: "Seni seviyorum", l: "Türkçe" },
+    { t: "Te iubesc", l: "Română" },
+    { t: "Kocham cię", l: "Polski" },
+    { t: "أنا أحبك", l: "العربية" },
+    { t: "אני אוהב אותך", l: "עברית" },
+    { t: "Σ’ αγαπώ", l: "Ελληνικά" },
+    { t: "愛してる", l: "日本語" },
+    { t: "사랑해", l: "한국어" },
+    { t: "我爱你", l: "中文" }
+  ];
+  
+  let loveIdx = 0;
+  let loveTimer = null;
+  
+  function startEndless(){
+    const phraseEl = document.getElementById("lovePhrase");
+    const signEl = document.getElementById("signLabel");
+    if(!phraseEl || !signEl) return;
+  
+    // остановить старый таймер если был
+    if(loveTimer) clearInterval(loveTimer);
+  
+    // сразу показать
+    const show = () => {
+      const item = LOVE_PHRASES[loveIdx % LOVE_PHRASES.length];
+      phraseEl.textContent = item.t;
+      signEl.textContent = `Язык жестов (ASL): “I love you” 🤟 · сейчас: ${item.l}`;
+      loveIdx++;
+    };
+    show();
+  
+    loveTimer = setInterval(show, 2000);
+  }
+  // ===== Stars + floating hearts for s8 =====
+  let starsBuilt = false;
+  let heartsTimer = null;
+  
+  function buildStars(){
+    if(starsBuilt) return;
+    starsBuilt = true;
+  
+    const sky = document.getElementById("sky");
+    if(!sky) return;
+  
+    const count = 70; // количество звёзд
+    for(let i=0;i<count;i++){
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = Math.random()*100 + "%";
+      s.style.top  = Math.random()*100 + "%";
+      s.style.animationDelay = (Math.random()*2.6) + "s";
+      const size = 1 + Math.random()*2; // 1..3px
+      s.style.width = size + "px";
+      s.style.height = size + "px";
+      sky.appendChild(s);
+    }
+  }
+  
+  function startHearts(){
+    const sky = document.getElementById("sky");
+    if(!sky) return;
+  
+    if(heartsTimer) clearInterval(heartsTimer);
+  
+    const emojis = ["❤️","💜","💖","💘","✨"];
+    heartsTimer = setInterval(() => {
+      const h = document.createElement("div");
+      h.className = "floatHeart";
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.left = (10 + Math.random()*80) + "%";
+      h.style.bottom = "-20px";
+      const duration = 6 + Math.random()*5; // 6..11 сек
+      h.style.animationDuration = duration + "s";
+      h.style.fontSize = (16 + Math.random()*14) + "px";
+      sky.appendChild(h);
+      setTimeout(()=> h.remove(), (duration*1000)+200);
+    }, 700);
+  }
+  
+  function stopHearts(){
+    if(heartsTimer) clearInterval(heartsTimer);
+    heartsTimer = null;
+  }
+  // кнопки переходов
+  $("toEndBtn").onclick = () => {
+    showScreen("s8");
+    buildStars();
+    startHearts();
+    startEndless();
+  };
+  
+  $("restartBtn").onclick = () => {
+    showScreen("s1");
   };
 </script>
 </body>
