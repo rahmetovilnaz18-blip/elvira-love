@@ -348,17 +348,18 @@
     <div class="card center">
       <h2>Листай пальцем ❤️</h2>
       <p>Свайп влево/вправо — как будто я перелистываю тебе признания.</p>
-
+  
       <div class="swipeWrap">
         <div class="swipeCard" id="swipeCard">
           <b id="confTitle">Ты — мой уют.</b>
           <div class="hint" id="confHint">Свайпни →</div>
         </div>
       </div>
-
-      <div class="btnRow">
-        <button class="primary" id="thinkBtn">Я думаю о тебе каждую секунду…</button>
-      </div>
+    </div>
+  
+    <!-- кнопка ниже карточки -->
+    <div class="btnRow" style="margin-top:16px;">
+      <button class="primary" id="thinkBtn">Я думаю о тебе каждую секунду…</button>
     </div>
   </section>
 
@@ -948,8 +949,10 @@
   };
 
   $("restartBtn").onclick = () => {
-    showScreen("s1");
+    document.body.style.opacity = "0";
+    setTimeout(() => location.reload(), 300);
   };
+  
 </script>
 </body>
 </html>
