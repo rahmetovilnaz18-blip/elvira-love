@@ -94,14 +94,10 @@
     /* Heart button: NO CIRCLE, just emoji */
     .iconBtn{
       all: unset;
-      position: fixed;
-      left: 16px;
-      bottom: 16px;
-      font-size: 36px;
+      font-size: 30px;
       line-height: 1;
       cursor: pointer;
-      z-index: 9999;
-      filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
+      user-select: none;
       transform-origin: center;
       transition: transform .08s ease;
     }
@@ -135,8 +131,8 @@
     .timerLabel{ font-size:12px; color:rgba(244,244,255,.6); margin-top:4px; }
 
     /* Wheel */
-    .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:22px; }
-    .wheelWrap{ width:280px; height:280px; position:relative; margin-top:10px; }
+    .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:28px; }
+    .wheelWrap{ width:280px; height:280px; position:relative; margin-top:18px; }
     .wheel{
       width:100%; height:100%; border-radius:50%;
       border:1px solid rgba(255,255,255,.14);
@@ -151,9 +147,9 @@
     }
     .pointer{
       position:absolute;
-      top:-52px;                /* БОЛЬШЕ ОТСТУП СВЕРХУ */
+      top:-18px; 
       left:50%;
-      transform: translateX(-50%) rotate(180deg); /* вниз */
+      transform: translateX(-50%) rotate(180deg);
       width:0; height:0;
       border-left:14px solid transparent;
       border-right:14px solid transparent;
@@ -199,13 +195,17 @@
     }
     @keyframes sweep{ 0%{ transform:translateX(0);} 100%{ transform:translateX(460%);} }
     /* ВАЖНО: центрируем изображение */
+    .scan{
+      margin-left:auto;
+      margin-right:auto;
+    }
     .scan img{
       width:100%;
       height:100%;
       object-fit:cover;
+      object-position:center center;
       display:block;
       margin:0 auto;
-      border-radius:24px;
     }
     .glitch{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -566,30 +566,32 @@
   updateTimers();
   setInterval(updateTimers, 1000);
 
-  // ====== Wheel: ALWAYS PURPLE + button disabled while spinning ======
-  $("spinBtn").onclick = () => {
-    const btn = $("spinBtn");
-    btn.disabled = true;
-
-    $("wheelResult").textContent = "Крутим судьбу...";
-    $("toQuizBtn").style.display = "none";
-
-    // ВСЕГДА в фиолетовый сектор (348..360)
-    const turns = 6 + Math.random() * 3;
-    const final = 354; // внутри фиолетового
-
-    const wheel = $("wheel");
-    wheel.style.transition = "none";
-    wheel.offsetHeight; // reset
-    wheel.style.transition = "transform 4.2s cubic-bezier(.12,.78,.15,1)";
-    wheel.style.transform = `rotate(${turns*360 + final}deg)`;
-
-    setTimeout(() => {
-      $("wheelResult").textContent = "Вместе навсегда 💜 Никакая судьба не разлучит нас.";
-      $("toQuizBtn").style.display = "inline-block";
-      btn.disabled = false;
-    }, 4200);
-  };
+  // ====== Wheel (ALWAYS PURPLE + always spins) ======
+    let wheelAngle = 0;
+    
+    $("spinBtn").onclick = () => {
+      const btn = $("spinBtn");
+      btn.disabled = true;
+    
+      $("wheelResult").textContent = "Крутим судьбу...";
+      $("toQuizBtn").style.display = "none";
+    
+      // фиолетовый сектор у тебя 348..360, берём середину
+      const final = 354;
+    
+      // добавляем обороты + точный финал, чтобы всегда было фиолетовое
+      const extraTurns = 6 + Math.random() * 4; // 6..10 оборотов
+      wheelAngle += extraTurns * 360 + final;
+    
+      const wheel = $("wheel");
+      wheel.style.transform = `rotate(${wheelAngle}deg)`;
+    
+      setTimeout(() => {
+        $("wheelResult").textContent = "Вместе навсегда 💜 Никакая судьба не разлучит нас.";
+        $("toQuizBtn").style.display = "inline-block";
+        btn.disabled = false;
+      }, 4200);
+    };
 
   // ====== Quiz with traps (оставил как было) ======
   let qIndex = 0;
