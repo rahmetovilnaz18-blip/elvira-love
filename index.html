@@ -61,7 +61,7 @@
       background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.14);
       color:var(--txt); font-weight:650; font-size:15px;
-      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease, opacity .2s ease;
     }
     button:active{ transform: scale(.98); }
     button.primary{
@@ -69,6 +69,7 @@
       border-color: rgba(255,77,125,.35);
     }
     button.ghost{ background:transparent; }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
     .tiny{ font-size:12px; color:rgba(244,244,255,.5); margin-top:10px; }
 
     /* Bottom bar */
@@ -89,6 +90,22 @@
     }
     .pillBtn button{ padding:10px 12px; border-radius:999px; font-size:14px; }
     .pillText{ font-size:13px; color:rgba(244,244,255,.65); }
+
+    /* Heart button: NO CIRCLE, just emoji */
+    .iconBtn{
+      all: unset;
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      font-size: 36px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 9999;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
+      transform-origin: center;
+      transition: transform .08s ease;
+    }
+    .iconBtn:active{ transform: scale(.82); }
 
     /* Swipe cards */
     .swipeWrap{ position:relative; height:220px; margin-top:12px; }
@@ -119,32 +136,31 @@
 
     /* Wheel */
     .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:22px; }
-    .wheelWrap{ width:280px; height:280px; position:relative; }
+    .wheelWrap{ width:280px; height:280px; position:relative; margin-top:10px; }
     .wheel{
       width:100%; height:100%; border-radius:50%;
       border:1px solid rgba(255,255,255,.14);
       box-shadow: 0 24px 80px rgba(0,0,0,.45);
-      background:
-        conic-gradient(
-          rgba(255,77,125,.85) 0deg 348deg,     /* ~96.7% */
-          rgba(122,92,255,.95) 348deg 360deg    /* ~3.3% */
-        );
+      /* визуально "почти всё розовое", но мы ВСЕГДА попадаем в фиолетовый */
+      background: conic-gradient(
+        rgba(255,77,125,.85) 0deg 348deg,
+        rgba(122,92,255,.95) 348deg 360deg
+      );
       transform: rotate(0deg);
       transition: transform 4.2s cubic-bezier(.12,.78,.15,1);
     }
-
     .pointer{
       position:absolute;
-      top:-28px; 
+      top:-52px;                /* БОЛЬШЕ ОТСТУП СВЕРХУ */
       left:50%;
-      transform: translateX(-50%) rotate(180deg);
+      transform: translateX(-50%) rotate(180deg); /* вниз */
       width:0; height:0;
       border-left:14px solid transparent;
       border-right:14px solid transparent;
       border-bottom:22px solid rgba(255,255,255,.95);
       z-index:10;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
     }
-    
     .wheelText{ font-size:13px; color:rgba(244,244,255,.65); max-width:320px; text-align:center; }
 
     /* Quiz */
@@ -163,8 +179,6 @@
       display:flex; align-items:center; justify-content:center;
       box-shadow: 0 18px 50px rgba(0,0,0,.35);
     }
-    .slot img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .slot span{ color:rgba(244,244,255,.6); font-size:12px; padding:8px; text-align:center; }
     .payout{ margin-top:12px; text-align:center; }
 
     /* Spoiler */
@@ -184,7 +198,15 @@
       animation: sweep 1.2s ease-in-out infinite;
     }
     @keyframes sweep{ 0%{ transform:translateX(0);} 100%{ transform:translateX(460%);} }
-    .scan img{ width:100%; height:100%; object-fit:cover; display:block; }
+    /* ВАЖНО: центрируем изображение */
+    .scan img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      margin:0 auto;
+      border-radius:24px;
+    }
     .glitch{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       color:rgba(244,244,255,.72);
@@ -200,60 +222,6 @@
       justify-content:center; align-items:center;
     }
     .overlay.show{ display:flex; }
-
-    #secretHeart{
-      position:absolute;
-      left:18px;
-      bottom:18px;
-      width:54px;
-      height:54px;
-      border-radius:999px;
-      font-size:26px;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 14px 40px rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-    }
-    #secretHeart:active{
-      transform: scale(.88); /* уменьшается при нажатии */
-    }
-
-    #scanBox{
-      display:flex !important;
-      align-items:center !important;
-      justify-content:center !important;
-    }
-    #scanBox img{
-      display:block;
-      margin:0 auto;
-      max-width:100%;
-      max-height:100%;
-      border-radius:24px;
-    }
-
-    .iconBtn{
-      all: unset;                 /* сбрасывает общий стиль button */
-      position: fixed;
-      left: 18px;
-      bottom: 18px;
-      width: 56px;
-      height: 56px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 28px;
-      cursor: pointer;
-      border-radius: 999px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow: 0 14px 40px rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-      z-index: 9999;
-    }
-    .iconBtn:active{
-      transform: scale(.88);
-    }
-    
   </style>
 </head>
 
@@ -332,12 +300,12 @@
           <div class="pointer"></div>
           <div class="wheel" id="wheel"></div>
         </div>
-        
+
         <div style="font-size:13px; margin-top:6px;">
           <span style="color:#ff4d7d;">■</span> расстанемся<br>
           <span style="color:#7a5cff;">■</span> вместе навсегда
         </div>
-        
+
         <div class="wheelText" id="wheelResult">Нажми «Крутить».</div>
 
         <div class="btnRow">
@@ -372,7 +340,7 @@
   <section class="screen" id="s6">
     <div class="card center">
       <h2>Игровой автомат 🎰</h2>
-      <p>Комбинации из моих фоток. Везение тут тоже не случайно.</p>
+      <p>Везение тут тоже не случайно.</p>
 
       <div class="slotRow">
         <div class="slot"><span id="slotA" style="font-size:42px;">❓</span></div>
@@ -380,13 +348,13 @@
         <div class="slot"><span id="slotC" style="font-size:42px;">❓</span></div>
       </div>
 
-      <div style="font-size:13px; margin-top:10px; text-align:center; opacity:.8">
+      <div style="font-size:13px; margin-top:10px; text-align:center; opacity:.85">
         💍💍💍 — свадьба<br>
         ✈️✈️✈️ — путешествие<br>
         🏡🏡🏡 — наш дом<br>
         ❤️❤️❤️ — романтический вечер
       </div>
-      
+
       <div class="payout" id="payoutText" style="color:rgba(244,244,255,.75); margin-top:10px;">
         Нажми «Крутить».
       </div>
@@ -412,7 +380,7 @@
         <button class="primary" id="spoilerBtn">Спойлер</button>
       </div>
 
-      <div class="tiny">P.S. секретный экран всё ещё где-то рядом…</div>
+      <div class="tiny">P.S. секретный экран открывается сердечком ❤️ (нажми 5 раз)</div>
     </div>
   </section>
 
@@ -426,15 +394,14 @@
         <button id="voiceStopBtn">⏹ Остановить</button>
         <button class="ghost" id="closeSecretBtn">Закрыть</button>
       </div>
-      <div class="tiny">Подсказка: чтобы открыть секрет, нажми на экран 5 раз на любом месте.</div>
+      <div class="tiny">Подсказка: нажми на ❤️ 5 раз.</div>
     </div>
   </div>
 
   <!-- Bottom controls -->
   <div class="bottomBar">
-
     <button id="secretHeart" class="iconBtn">❤️</button>
-    
+
     <div class="pillBtn">
       <button id="musicBtn">▶️</button>
       <div class="pillText" id="musicLabel">Музыка выключена</div>
@@ -447,7 +414,6 @@
   const GIRL_NAME = "Эльвира";
   const REL_START = "2024-10-13T00:00:00"; // 13.10.2024
 
-  // Признания (можешь менять/добавлять)
   const CONFESSIONS = [
     "Ты — мой уют.",
     "С тобой мир становится добрее.",
@@ -458,22 +424,13 @@
     "Ты — моё любимое «всегда»."
   ];
 
-  // Вопросы с подвохом
   const QUIZ = [
     { q: "Ильназ любит тебя?", punch: "Неправильно. Он не любит. Он обожает тебя ❤️" },
-    { q: "Кто самая красивая?", punch: "Оба варианта неверные. Потому что правильный ответ — Эльвира 💘" },
+    { q: "Кто самая красивая?", punch: "Оба варианта неверные. Правильный ответ — Эльвира 💘" },
     { q: "Кто моя судьба?", punch: "Неверно. Судьба — это ты. И точка." },
     { q: "Кого я хочу обнять прямо сейчас?", punch: "Неправильно. Потому что я хочу обнять тебя." }
   ];
 
-  // Слоты (твои фото)
-  const SLOT_IMAGES = [
-    "assets/slot1.jpg",
-    "assets/slot2.jpg",
-    "assets/slot3.jpg"
-  ];
-
-  // AI будущее
   const FUTURE_IMAGES = [
     "assets/future1.jpg",
     "assets/future2.jpg",
@@ -488,10 +445,10 @@
   // ====== Helpers ======
   const $ = (id) => document.getElementById(id);
   const screens = ["s1","s2","s3","s4","s5","s6","s7"].map($);
+  const randItem = (arr) => arr[Math.floor(Math.random()*arr.length)];
 
   function showScreen(id){
     screens.forEach(s => s.classList.toggle("active", s.id === id));
-    // небольшой вибро-эффект, если поддерживается
     if (navigator.vibrate) navigator.vibrate(10);
   }
 
@@ -567,7 +524,7 @@
     const dx = currentX - startX;
     card.style.transition = "transform .25s ease, opacity .25s ease";
     if(Math.abs(dx) > 110){
-      confIndex = (confIndex + (dx < 0 ? 1 : 1)) % CONFESSIONS.length;
+      confIndex = (confIndex + 1) % CONFESSIONS.length;
       card.style.transform = `translateX(${dx < 0 ? -320 : 320}px) rotate(${dx < 0 ? -12 : 12}deg)`;
       card.style.opacity = "0";
       setTimeout(() => {
@@ -592,7 +549,6 @@
   const relEl = $("relTimer");
   const thinkEl = $("thinkTimer");
 
-  // Мысли: 1 в секунду (можно изменить скорость)
   function updateTimers(){
     const start = new Date(REL_START).getTime();
     const now = Date.now();
@@ -605,41 +561,37 @@
     const secs = totalSec % 60;
 
     relEl.textContent = `${days}д ${hours}ч ${mins}м ${secs}с`;
-
-    // "Думаю о тебе" — примерно: 1 мысль/секунду
-    // Можно сделать например 3/сек: totalSec * 3
-    const thoughts = totalSec;
-    thinkEl.textContent = thoughts.toLocaleString("ru-RU");
+    thinkEl.textContent = totalSec.toLocaleString("ru-RU");
   }
   updateTimers();
   setInterval(updateTimers, 1000);
 
-  // ====== Wheel (always "не расстанемся") ======
-  let spun = false;
+  // ====== Wheel: ALWAYS PURPLE + button disabled while spinning ======
   $("spinBtn").onclick = () => {
+    const btn = $("spinBtn");
+    btn.disabled = true;
 
     $("wheelResult").textContent = "Крутим судьбу...";
     $("toQuizBtn").style.display = "none";
 
-    const turns = 6 + Math.random() * 3; // разное число оборотов
-    const final = 354; // всегда сектор "вместе"
+    // ВСЕГДА в фиолетовый сектор (348..360)
+    const turns = 6 + Math.random() * 3;
+    const final = 354; // внутри фиолетового
 
-    $("wheel").style.transition = "none";
-    const current = getComputedStyle($("wheel")).transform;
-
-    $("wheel").offsetHeight; // reset
-
-    $("wheel").style.transition = "transform 4.2s cubic-bezier(.12,.78,.15,1)";
-    $("wheel").style.transform = `rotate(${turns*360 + final}deg)`;
+    const wheel = $("wheel");
+    wheel.style.transition = "none";
+    wheel.offsetHeight; // reset
+    wheel.style.transition = "transform 4.2s cubic-bezier(.12,.78,.15,1)";
+    wheel.style.transform = `rotate(${turns*360 + final}deg)`;
 
     setTimeout(() => {
-      $("wheelResult").textContent =
-        "Вместе навсегда 💞 Никакая судьба не разлучит нас.";
+      $("wheelResult").textContent = "Вместе навсегда 💜 Никакая судьба не разлучит нас.";
       $("toQuizBtn").style.display = "inline-block";
+      btn.disabled = false;
     }, 4200);
   };
 
-  // ====== Quiz with traps ======
+  // ====== Quiz with traps (оставил как было) ======
   let qIndex = 0;
   function renderQ(){
     $("qText").textContent = QUIZ[qIndex].q;
@@ -654,106 +606,92 @@
     $("qResult").innerHTML = `<span>Неправильно.</span> ${QUIZ[qIndex].punch}`;
     $("luckBtn").style.display = "inline-block";
     $("qHint").textContent = "Идём дальше 😉";
-    // Следующий вопрос на следующий заход (если захочешь циклом)
     qIndex = (qIndex + 1) % QUIZ.length;
   }
   $("ansYes").onclick = answer;
   $("ansNo").onclick = answer;
 
-  
   // ====== Slot (NO PHOTOS) ======
-const SLOT_ITEMS = ["❤️","💖","💋","🫂","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
+  const SLOT_ITEMS = ["❤️","💖","💋","🫂","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
 
-function randItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  $("slotSpinBtn").onclick = () => {
+    $("nextBtn").style.display = "none";
+    $("payoutText").textContent = "Крутим…";
 
-let slotSpins = 0;
-$("slotSpinBtn").onclick = () => {
-  slotSpins++;
-  $("nextBtn").style.display = "none";
-  $("payoutText").textContent = "Крутим…";
+    const a = randItem(SLOT_ITEMS);
+    const b = randItem(SLOT_ITEMS);
+    const c = randItem(SLOT_ITEMS);
 
-  // финальные значения
-  const a = randItem(SLOT_ITEMS);
-  const b = randItem(SLOT_ITEMS);
-  const c = randItem(SLOT_ITEMS);
+    let t = 0;
+    const anim = setInterval(() => {
+      $("slotA").textContent = randItem(SLOT_ITEMS);
+      $("slotB").textContent = randItem(SLOT_ITEMS);
+      $("slotC").textContent = randItem(SLOT_ITEMS);
+      t++;
+      if(t > 14){
+        clearInterval(anim);
+        $("slotA").textContent = a;
+        $("slotB").textContent = b;
+        $("slotC").textContent = c;
 
-  let t = 0;
-  const anim = setInterval(() => {
-    $("slotA").textContent = randItem(SLOT_ITEMS);
-    $("slotB").textContent = randItem(SLOT_ITEMS);
-    $("slotC").textContent = randItem(SLOT_ITEMS);
-    t++;
-    if(t > 14){
-      clearInterval(anim);
-      $("slotA").textContent = a;
-      $("slotB").textContent = b;
-      $("slotC").textContent = c;
+        let msg = "Мне нравится любая комбинация, если ты рядом ❤️";
+        if(a === b && b === c){
+          if(a === "💍") msg = "ДЖЕКПОТ 💍 Это знак: мы навсегда вместе.";
+          else if(a === "✈️") msg = "ДЖЕКПОТ ✈️ Скоро путешествие мечты!";
+          else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 Наш дом — это мы.";
+          else msg = "ДЖЕКПОТ 💘 Ты — мой главный выигрыш.";
+        } else if(a === b || b === c || a === c){
+          msg = "Почти джекпот 😄 Но главный приз — ты.";
+        }
 
-      // “комбинации”
-      let msg = "Мне нравится любая комбинация, если ты рядом ❤️";
-      if(a === b && b === c){
-        if(a === "💍") msg = "ДЖЕКПОТ 💍 Это знак: мы навсегда вместе.";
-        else if(a === "✈️") msg = "ДЖЕКПОТ ✈️ Скоро путешествие мечты!";
-        else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 Наш дом — это мы.";
-        else msg = "ДЖЕКПОТ 💘 Ты — мой главный выигрыш.";
-      } else if(a === b || b === c || a === c){
-        msg = "Почти джекпот 😄 Но главный приз — ты.";
+        $("payoutText").textContent = msg;
+        $("nextBtn").style.display = "inline-block";
       }
+    }, 80);
+  };
 
-      $("payoutText").textContent = msg;
-      $("nextBtn").style.display = "inline-block";
-    }
-  }, 80);
-};
-
-  // ====== Spoiler Future ======
+  // ====== Spoiler Future (ENDLESS + centered) ======
   $("spoilerBtn").onclick = () => {
     const box = $("scanBox");
     box.classList.add("loading");
     box.innerHTML = `<div class="glitch">Генерация…</div>`;
-  
+
     setTimeout(() => {
       const img = document.createElement("img");
-      img.src = randItem(FUTURE_IMAGES) + "?" + Date.now();
+      img.src = randItem(FUTURE_IMAGES) + "?" + Date.now(); // anti-cache
       img.onload = () => {
         box.classList.remove("loading");
         box.innerHTML = "";
         box.appendChild(img);
       };
-    }, 1000);
+      img.onerror = () => {
+        box.classList.remove("loading");
+        box.innerHTML = `<div class="glitch">Не вижу future1/2/3 в assets 😅</div>`;
+      };
+    }, 900);
   };
 
-  // ====== Secret screen: 5 taps anywhere ======
-  let taps = 0;
-  let tapTimer = null;
-
-  function openSecret(){
-    $("secretOverlay").classList.add("show");
-    if (navigator.vibrate) navigator.vibrate([20,10,20]);
-  }
-  function closeSecret(){
+  // ====== Secret: only heart taps (5) ======
+  $("closeSecretBtn").onclick = () => {
     $("secretOverlay").classList.remove("show");
     voice.pause(); voice.currentTime = 0;
-  }
-  $("closeSecretBtn").onclick = closeSecret;
-
-  // voice controls
+  };
   $("voicePlayBtn").onclick = async () => { try{ await voice.play(); }catch(e){} };
   $("voiceStopBtn").onclick = () => { voice.pause(); voice.currentTime = 0; };
 
   let secretTap = 0;
-
+  let secretTimer = null;
   $("secretHeart").onclick = () => {
     secretTap++;
+    clearTimeout(secretTimer);
+    secretTimer = setTimeout(()=> secretTap = 0, 1200);
 
-    if(secretTap === 5){
-      $("secretOverlay").classList.add("show");
+    if(secretTap >= 5){
       secretTap = 0;
+      $("secretOverlay").classList.add("show");
+      if (navigator.vibrate) navigator.vibrate([20,10,20]);
     }
-
-    setTimeout(() => secretTap = 0, 1200);
   };
-
 </script>
 </body>
 </html>
