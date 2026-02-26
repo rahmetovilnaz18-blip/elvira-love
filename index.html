@@ -299,6 +299,25 @@
     @media (max-width: 420px){
       #lovePhrase{ font-size: 38px; }
     }
+    /* Center love block perfectly */
+    #s8 .loveBlock{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:8px;
+    }
+    
+    #s8 #langNow{
+      margin-top:0 !important;
+    }
+    
+    #s8 .loveSub{
+      margin: 0;
+      max-width: 480px;
+    }
   </style>
 </head>
 
@@ -467,9 +486,11 @@
   <section class="screen" id="s8">
     <div class="sky" id="sky"></div>
     <div class="card center">
-      <h2 id="lovePhrase">Я люблю тебя</h2>
-      <div class="tiny" id="langNow" style="margin-top:6px;">Русский</div>
-      <p style="margin-top:10px;">Я найду все разные способы сказать как я тебя люблю</p>
+      <div class="loveBlock">
+        <h2 id="lovePhrase">Я люблю тебя</h2>
+        <div class="tiny" id="langNow">Русский</div>
+        <p class="loveSub">Я найду все разные способы сказать как я тебя люблю</p>
+      </div>
 
       <div class="btnRow">
         <button class="ghost" id="restartBtn">Начать сначала</button>
