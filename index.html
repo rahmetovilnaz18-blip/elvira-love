@@ -1,1 +1,694 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Эльвире ❤️</title>
+  <style>
+    :root{
+      --bg:#070710;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.04);
+      --stroke:rgba(255,255,255,.10);
+      --txt:#f4f4ff;
+      --muted:rgba(244,244,255,.72);
+      --accent:#ff4d7d;
+      --accent2:#7a5cff;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r:26px;
+    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html,body{ height:100%; margin:0; background:var(--bg); color:var(--txt); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; }
+    body{
+      overflow:hidden;
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(122,92,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(255,77,125,.20), transparent 60%),
+        radial-gradient(1200px 800px at 50% 120%, rgba(255,255,255,.05), transparent 60%),
+        var(--bg);
+    }
 
+    .app{ position:relative; height:100%; }
+    .screen{
+      position:absolute; inset:0;
+      padding:18px 18px 92px;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      opacity:0; transform: translateY(10px);
+      transition: opacity .35s ease, transform .35s ease;
+      pointer-events:none;
+    }
+    .screen.active{ opacity:1; transform: translateY(0); pointer-events:auto; }
+
+    .card{
+      width:min(720px, 100%);
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      padding:20px;
+    }
+    .card + .card{ margin-top:14px; background:var(--card2); }
+    h1{ margin:0 0 10px; font-size:34px; letter-spacing:.2px; }
+    h2{ margin:0 0 10px; font-size:20px; }
+    p{ margin:0; color:var(--muted); line-height:1.6; font-size:15px; }
+    .center{ text-align:center; }
+
+    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+    button{
+      appearance:none; border:none; cursor:pointer; user-select:none;
+      padding:13px 16px; border-radius:16px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--txt); font-weight:650; font-size:15px;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    }
+    button:active{ transform: scale(.98); }
+    button.primary{
+      background: linear-gradient(135deg, rgba(255,77,125,.95), rgba(122,92,255,.90));
+      border-color: rgba(255,77,125,.35);
+    }
+    button.ghost{ background:transparent; }
+    .tiny{ font-size:12px; color:rgba(244,244,255,.5); margin-top:10px; }
+
+    /* Bottom bar */
+    .bottomBar{
+      position:absolute; left:0; right:0; bottom:0;
+      padding:14px 14px 18px;
+      display:flex; justify-content:center; align-items:center; gap:10px;
+      pointer-events:auto;
+    }
+    .pillBtn{
+      display:flex; align-items:center; gap:10px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:999px;
+      padding:10px 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    .pillBtn button{ padding:10px 12px; border-radius:999px; font-size:14px; }
+    .pillText{ font-size:13px; color:rgba(244,244,255,.65); }
+
+    /* Swipe cards */
+    .swipeWrap{ position:relative; height:220px; margin-top:12px; }
+    .swipeCard{
+      position:absolute; inset:0;
+      padding:18px;
+      border-radius:22px;
+      background: linear-gradient(135deg, rgba(255,77,125,.20), rgba(122,92,255,.18));
+      border:1px solid rgba(255,255,255,.14);
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      text-align:center;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      touch-action: pan-y;
+    }
+    .swipeCard b{ font-size:18px; }
+    .hint{ margin-top:10px; font-size:12px; color:rgba(244,244,255,.55); }
+
+    /* Timers */
+    .grid3{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px; }
+    .timerBox{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:20px;
+      padding:14px;
+    }
+    .timerBig{ font-size:22px; font-weight:800; letter-spacing:.3px; }
+    .timerLabel{ font-size:12px; color:rgba(244,244,255,.6); margin-top:4px; }
+
+    /* Wheel */
+    .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:12px; }
+    .wheelWrap{ width:280px; height:280px; position:relative; }
+    .wheel{
+      width:100%; height:100%; border-radius:50%;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 24px 80px rgba(0,0,0,.45);
+      background:
+        conic-gradient(
+          rgba(255,77,125,.85) 0deg 356.4deg,     /* 99% */
+          rgba(122,92,255,.95) 356.4deg 360deg   /* 1% */
+        );
+      transform: rotate(0deg);
+      transition: transform 4.2s cubic-bezier(.12,.78,.15,1);
+    }
+    .pointer{
+      position:absolute; top:-10px; left:50%; transform: translateX(-50%);
+      width:0; height:0;
+      border-left:12px solid transparent;
+      border-right:12px solid transparent;
+      border-bottom:18px solid rgba(255,255,255,.9);
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,.35));
+    }
+    .wheelText{ font-size:13px; color:rgba(244,244,255,.65); max-width:320px; text-align:center; }
+
+    /* Quiz */
+    .q{ font-size:18px; font-weight:800; margin-bottom:10px; text-align:center; }
+    .ansRow{ display:flex; gap:10px; justify-content:center; }
+    .result{ margin-top:12px; text-align:center; font-weight:700; }
+    .result span{ color:#ffd0dc; }
+
+    /* Slot */
+    .slotRow{ display:flex; gap:10px; justify-content:center; margin-top:12px; }
+    .slot{
+      width:96px; height:96px; border-radius:20px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    .slot img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .slot span{ color:rgba(244,244,255,.6); font-size:12px; padding:8px; text-align:center; }
+    .payout{ margin-top:12px; text-align:center; }
+
+    /* Spoiler */
+    .scan{
+      margin-top:12px;
+      width:100%; max-width:520px; aspect-ratio: 4/3;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(255,77,125,.14), rgba(122,92,255,.12));
+      position:relative; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .scan.loading::after{
+      content:"";
+      position:absolute; left:-30%; top:0; width:30%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      animation: sweep 1.2s ease-in-out infinite;
+    }
+    @keyframes sweep{ 0%{ transform:translateX(0);} 100%{ transform:translateX(460%);} }
+    .scan img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .glitch{
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color:rgba(244,244,255,.72);
+      font-size:13px;
+    }
+
+    /* Secret overlay */
+    .overlay{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.68);
+      display:none;
+      padding:18px;
+      justify-content:center; align-items:center;
+    }
+    .overlay.show{ display:flex; }
+  </style>
+</head>
+
+<body>
+<div class="app" id="app">
+
+  <!-- 1: Welcome -->
+  <section class="screen active" id="s1">
+    <div class="card center">
+      <div class="tiny">Секретный сайт только для тебя</div>
+      <h1><span id="typeName"></span> ❤️</h1>
+      <p>У меня есть одна интерактивная штука… и она вся про то, как сильно я тебя люблю.</p>
+      <div class="btnRow">
+        <button class="primary" id="startBtn">Почему я люблю тебя?</button>
+      </div>
+      <div class="tiny">Подсказка: свайпай и нажимай — тут много сюрпризов</div>
+    </div>
+  </section>
+
+  <!-- 2: Swipe confessions -->
+  <section class="screen" id="s2">
+    <div class="card center">
+      <h2>Листай пальцем ❤️</h2>
+      <p>Свайп влево/вправо — как будто я перелистываю тебе признания.</p>
+
+      <div class="swipeWrap">
+        <div class="swipeCard" id="swipeCard">
+          <b id="confTitle">Ты — мой уют.</b>
+          <div class="hint" id="confHint">Свайпни →</div>
+        </div>
+      </div>
+
+      <div class="btnRow">
+        <button class="primary" id="thinkBtn">Я думаю о тебе каждую секунду…</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3: Timers -->
+  <section class="screen" id="s3">
+    <div class="card center">
+      <h2>И это всё настоящее ⏳</h2>
+      <p>Я люблю тебя уже вот столько времени…</p>
+
+      <div class="grid3">
+        <div class="timerBox">
+          <div class="timerBig" id="relTimer">—</div>
+          <div class="timerLabel">с 13.10.2024</div>
+        </div>
+
+        <div class="timerBox">
+          <div class="timerBig" id="thinkTimer">—</div>
+          <div class="timerLabel">столько раз я подумал о тебе (примерно 😄)</div>
+        </div>
+
+        <div class="timerBox">
+          <div class="timerBig" id="foreverTimer">∞</div>
+          <div class="timerLabel">и дальше будет только больше</div>
+        </div>
+      </div>
+
+      <div class="btnRow">
+        <button class="primary" id="fateBtn">Хмм… а может не судьба?..</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: Wheel -->
+  <section class="screen" id="s4">
+    <div class="card center">
+      <h2>Колесо судьбы 🎡</h2>
+      <p>Тут честно: расставание занимает 99%…</p>
+
+      <div class="wheelArea">
+        <div class="wheelWrap">
+          <div class="pointer"></div>
+          <div class="wheel" id="wheel"></div>
+        </div>
+
+        <div class="wheelText" id="wheelResult">Нажми «Крутить».</div>
+
+        <div class="btnRow">
+          <button class="primary" id="spinBtn">Крутить</button>
+          <button id="toQuizBtn" class="ghost" style="display:none;">Тест отношений</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5: Quiz -->
+  <section class="screen" id="s5">
+    <div class="card center">
+      <h2>Тест отношений 🧠</h2>
+      <div class="q" id="qText">Ильназ любит тебя?</div>
+      <div class="ansRow">
+        <button id="ansYes">Да</button>
+        <button id="ansNo">Нет</button>
+      </div>
+      <div class="result" id="qResult" style="display:none;">
+        <span>Неправильно.</span> Он не любит. Он обожает тебя ❤️
+      </div>
+
+      <div class="btnRow">
+        <button class="primary" id="luckBtn" style="display:none;">Попытать удачу</button>
+      </div>
+      <div class="tiny" id="qHint">Выбери любой вариант 😄</div>
+    </div>
+  </section>
+
+  <!-- 6: Slot -->
+  <section class="screen" id="s6">
+    <div class="card center">
+      <h2>Игровой автомат 🎰</h2>
+      <p>Комбинации из моих фоток. Везение тут тоже не случайно.</p>
+
+      <div class="slotRow">
+        <div class="slot"><span id="slotA" style="font-size:42px;">❓</span></div>
+        <div class="slot"><span id="slotB" style="font-size:42px;">❓</span></div>
+        <div class="slot"><span id="slotC" style="font-size:42px;">❓</span></div>
+      </div>
+
+      <div class="payout" id="payoutText" style="color:rgba(244,244,255,.75); margin-top:10px;">
+        Нажми «Крутить».
+      </div>
+
+      <div class="btnRow">
+        <button class="primary" id="slotSpinBtn">Крутить</button>
+        <button id="nextBtn" class="ghost" style="display:none;">А что дальше?..</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7: Spoiler future -->
+  <section class="screen" id="s7">
+    <div class="card center">
+      <h2>Спойлер будущего 🔮</h2>
+      <p>Нажми — и я покажу один случайный кусочек нашего будущего.</p>
+
+      <div class="scan" id="scanBox">
+        <div class="glitch" id="scanText">Готов к генерации…</div>
+      </div>
+
+      <div class="btnRow">
+        <button class="primary" id="spoilerBtn">Спойлер</button>
+      </div>
+
+      <div class="tiny">P.S. секретный экран всё ещё где-то рядом…</div>
+    </div>
+  </section>
+
+  <!-- Secret overlay -->
+  <div class="overlay" id="secretOverlay">
+    <div class="card center" style="max-width:720px;">
+      <h2>Секретное сообщение 🎧</h2>
+      <p>Это только для тебя. Нажми play.</p>
+      <div class="btnRow">
+        <button class="primary" id="voicePlayBtn">▶️ Воспроизвести</button>
+        <button id="voiceStopBtn">⏹ Остановить</button>
+        <button class="ghost" id="closeSecretBtn">Закрыть</button>
+      </div>
+      <div class="tiny">Подсказка: чтобы открыть секрет, нажми на экран 5 раз на любом месте.</div>
+    </div>
+  </div>
+
+  <!-- Bottom controls -->
+  <div class="bottomBar">
+    <div class="pillBtn">
+      <button id="musicBtn">▶️</button>
+      <div class="pillText" id="musicLabel">Музыка выключена</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ====== Settings ======
+  const GIRL_NAME = "Эльвира";
+  const REL_START = "2024-10-13T00:00:00"; // 13.10.2024
+
+  // Признания (можешь менять/добавлять)
+  const CONFESSIONS = [
+    "Ты — мой уют.",
+    "С тобой мир становится добрее.",
+    "Твоя улыбка — моя слабость.",
+    "Я горжусь тобой.",
+    "Мне хорошо просто рядом.",
+    "Я выбираю тебя каждый день.",
+    "Ты — моё любимое «всегда»."
+  ];
+
+  // Вопросы с подвохом
+  const QUIZ = [
+    { q: "Ильназ любит тебя?", punch: "Неправильно. Он не любит. Он обожает тебя ❤️" },
+    { q: "Кто самая красивая?", punch: "Оба варианта неверные. Потому что правильный ответ — Эльвира 💘" },
+    { q: "Кто моя судьба?", punch: "Неверно. Судьба — это ты. И точка." },
+    { q: "Кого я хочу обнять прямо сейчас?", punch: "Неправильно. Потому что я хочу обнять тебя." }
+  ];
+
+  // Слоты (твои фото)
+  const SLOT_IMAGES = [
+    "assets/slot1.jpg",
+    "assets/slot2.jpg",
+    "assets/slot3.jpg"
+  ];
+
+  // AI будущее
+  const FUTURE_IMAGES = [
+    "assets/future1.jpg",
+    "assets/future2.jpg",
+    "assets/future3.jpg"
+  ];
+
+  // Media
+  const bgMusic = new Audio("assets/song.mp3");
+  bgMusic.loop = true;
+  const voice = new Audio("assets/voice.mp3");
+
+  // ====== Helpers ======
+  const $ = (id) => document.getElementById(id);
+  const screens = ["s1","s2","s3","s4","s5","s6","s7"].map($);
+
+  function showScreen(id){
+    screens.forEach(s => s.classList.toggle("active", s.id === id));
+    // небольшой вибро-эффект, если поддерживается
+    if (navigator.vibrate) navigator.vibrate(10);
+  }
+
+  // ====== Typing name ======
+  const typeEl = $("typeName");
+  const text = GIRL_NAME + ",";
+  let i = 0;
+  const typeInt = setInterval(() => {
+    typeEl.textContent = text.slice(0, i++);
+    if (i > text.length) clearInterval(typeInt);
+  }, 80);
+
+  // ====== Music control ======
+  let musicOn = false;
+  function setMusicUI(){
+    $("musicBtn").textContent = musicOn ? "⏸" : "▶️";
+    $("musicLabel").textContent = musicOn ? "Музыка играет" : "Музыка выключена";
+  }
+  setMusicUI();
+
+  $("musicBtn").addEventListener("click", async () => {
+    try{
+      if(!musicOn){
+        await bgMusic.play();
+        musicOn = true;
+      }else{
+        bgMusic.pause();
+        musicOn = false;
+      }
+      setMusicUI();
+    }catch(e){
+      $("musicLabel").textContent = "Нажми ещё раз (браузер требует действие)";
+    }
+  });
+
+  // ====== Navigation ======
+  $("startBtn").onclick = () => showScreen("s2");
+  $("thinkBtn").onclick = () => showScreen("s3");
+  $("fateBtn").onclick = () => showScreen("s4");
+  $("toQuizBtn").onclick = () => showScreen("s5");
+  $("luckBtn").onclick = () => showScreen("s6");
+  $("nextBtn").onclick = () => showScreen("s7");
+
+  // ====== Swipe confessions ======
+  let confIndex = 0;
+  const confTitle = $("confTitle");
+  const confHint = $("confHint");
+  function renderConf(){
+    confTitle.textContent = CONFESSIONS[confIndex % CONFESSIONS.length];
+    confHint.textContent = "Свайпни →";
+  }
+  renderConf();
+
+  const card = $("swipeCard");
+  let startX = 0, currentX = 0, dragging = false;
+
+  function pointerDown(x){
+    dragging = true;
+    startX = x; currentX = x;
+    card.style.transition = "none";
+  }
+  function pointerMove(x){
+    if(!dragging) return;
+    currentX = x;
+    const dx = currentX - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx*0.04}deg)`;
+    card.style.opacity = String(1 - Math.min(Math.abs(dx)/260, 0.6));
+    confHint.textContent = dx < 0 ? "←" : "→";
+  }
+  function pointerUp(){
+    if(!dragging) return;
+    dragging = false;
+    const dx = currentX - startX;
+    card.style.transition = "transform .25s ease, opacity .25s ease";
+    if(Math.abs(dx) > 80){
+      confIndex = (confIndex + (dx < 0 ? 1 : 1)) % CONFESSIONS.length;
+      card.style.transform = `translateX(${dx < 0 ? -320 : 320}px) rotate(${dx < 0 ? -12 : 12}deg)`;
+      card.style.opacity = "0";
+      setTimeout(() => {
+        card.style.transition = "none";
+        card.style.transform = "translateX(0) rotate(0)";
+        card.style.opacity = "1";
+        renderConf();
+        setTimeout(() => card.style.transition = "transform .25s ease, opacity .25s ease", 0);
+      }, 260);
+    }else{
+      card.style.transform = "translateX(0) rotate(0)";
+      card.style.opacity = "1";
+      confHint.textContent = "Свайпни →";
+    }
+  }
+
+  card.addEventListener("touchstart", (e)=>pointerDown(e.touches[0].clientX), {passive:true});
+  card.addEventListener("touchmove",  (e)=>pointerMove(e.touches[0].clientX),  {passive:true});
+  card.addEventListener("touchend",   ()=>pointerUp(), {passive:true});
+
+  // ====== Timers ======
+  const relEl = $("relTimer");
+  const thinkEl = $("thinkTimer");
+
+  // Мысли: 1 в секунду (можно изменить скорость)
+  function updateTimers(){
+    const start = new Date(REL_START).getTime();
+    const now = Date.now();
+    const diff = Math.max(0, now - start);
+
+    const totalSec = Math.floor(diff / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+
+    relEl.textContent = `${days}д ${hours}ч ${mins}м ${secs}с`;
+
+    // "Думаю о тебе" — примерно: 1 мысль/секунду
+    // Можно сделать например 3/сек: totalSec * 3
+    const thoughts = totalSec;
+    thinkEl.textContent = thoughts.toLocaleString("ru-RU");
+  }
+  updateTimers();
+  setInterval(updateTimers, 1000);
+
+  // ====== Wheel (always "не расстанемся") ======
+  let spun = false;
+  $("spinBtn").onclick = () => {
+    if(spun) return;
+    spun = true;
+    $("wheelResult").textContent = "Крутим судьбу...";
+    $("toQuizBtn").style.display = "none";
+
+    // Позиция стрелки сверху (0deg). Нам надо всегда попадать в маленький сектор 1% (356.4..360)
+    // Сделаем много оборотов + конечный угол 358.5 (внутри 1% сектора)
+    const turns = 8; // оборотов
+    const final = 358.5;
+    $("wheel").style.transform = `rotate(${turns*360 + final}deg)`;
+
+    setTimeout(() => {
+      $("wheelResult").textContent = "Вместе навсегда 💞 Никакая судьба не разлучит нас.";
+      $("toQuizBtn").style.display = "inline-block";
+    }, 4400);
+  };
+
+  // ====== Quiz with traps ======
+  let qIndex = 0;
+  function renderQ(){
+    $("qText").textContent = QUIZ[qIndex].q;
+    $("qResult").style.display = "none";
+    $("luckBtn").style.display = "none";
+    $("qHint").textContent = "Выбери любой вариант 😄";
+  }
+  renderQ();
+
+  function answer(){
+    $("qResult").style.display = "block";
+    $("qResult").innerHTML = `<span>Неправильно.</span> ${QUIZ[qIndex].punch}`;
+    $("luckBtn").style.display = "inline-block";
+    $("qHint").textContent = "Идём дальше 😉";
+    // Следующий вопрос на следующий заход (если захочешь циклом)
+    qIndex = (qIndex + 1) % QUIZ.length;
+  }
+  $("ansYes").onclick = answer;
+  $("ansNo").onclick = answer;
+
+  
+  // ====== Slot (NO PHOTOS) ======
+const SLOT_ITEMS = ["❤️","💖","💋","🫂","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
+
+function randItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+let slotSpins = 0;
+$("slotSpinBtn").onclick = () => {
+  slotSpins++;
+  $("nextBtn").style.display = "none";
+  $("payoutText").textContent = "Крутим…";
+
+  // финальные значения
+  const a = randItem(SLOT_ITEMS);
+  const b = randItem(SLOT_ITEMS);
+  const c = randItem(SLOT_ITEMS);
+
+  let t = 0;
+  const anim = setInterval(() => {
+    $("slotA").textContent = randItem(SLOT_ITEMS);
+    $("slotB").textContent = randItem(SLOT_ITEMS);
+    $("slotC").textContent = randItem(SLOT_ITEMS);
+    t++;
+    if(t > 14){
+      clearInterval(anim);
+      $("slotA").textContent = a;
+      $("slotB").textContent = b;
+      $("slotC").textContent = c;
+
+      // “комбинации”
+      let msg = "Мне нравится любая комбинация, если ты рядом ❤️";
+      if(a === b && b === c){
+        if(a === "💍") msg = "ДЖЕКПОТ 💍 Это знак: мы навсегда вместе.";
+        else if(a === "✈️") msg = "ДЖЕКПОТ ✈️ Скоро путешествие мечты!";
+        else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 Наш дом — это мы.";
+        else msg = "ДЖЕКПОТ 💘 Ты — мой главный выигрыш.";
+      } else if(a === b || b === c || a === c){
+        msg = "Почти джекпот 😄 Но главный приз — ты.";
+      }
+
+      $("payoutText").textContent = msg;
+      $("nextBtn").style.display = "inline-block";
+    }
+  }, 80);
+};
+
+  // ====== Spoiler Future ======
+  $("spoilerBtn").onclick = () => {
+    const box = $("scanBox");
+    box.classList.add("loading");
+    $("scanText").textContent = "Генерация… 0%";
+    box.innerHTML = `<div class="glitch" id="scanText">Генерация… 0%</div>`;
+    const txt = () => document.getElementById("scanText");
+
+    let pct = 0;
+    const it = setInterval(() => {
+      pct += Math.floor(Math.random()*18)+6;
+      if(pct >= 100) pct = 100;
+      if(txt()) txt().textContent = `Генерация… ${pct}%`;
+      if(pct === 100){
+        clearInterval(it);
+        const img = document.createElement("img");
+        img.src = randItem(FUTURE_IMAGES);
+        img.onerror = () => {
+          box.classList.remove("loading");
+          box.innerHTML = `<div class="glitch">Добавь future1.jpg / future2.jpg / future3.jpg в assets/ 🙂</div>`;
+        };
+        img.onload = () => {
+          box.classList.remove("loading");
+          box.innerHTML = "";
+          box.appendChild(img);
+        };
+      }
+    }, 160);
+  };
+
+  // ====== Secret screen: 5 taps anywhere ======
+  let taps = 0;
+  let tapTimer = null;
+
+  function openSecret(){
+    $("secretOverlay").classList.add("show");
+    if (navigator.vibrate) navigator.vibrate([20,10,20]);
+  }
+  function closeSecret(){
+    $("secretOverlay").classList.remove("show");
+    voice.pause(); voice.currentTime = 0;
+  }
+  $("closeSecretBtn").onclick = closeSecret;
+
+  // voice controls
+  $("voicePlayBtn").onclick = async () => { try{ await voice.play(); }catch(e){} };
+  $("voiceStopBtn").onclick = () => { voice.pause(); voice.currentTime = 0; };
+
+  document.addEventListener("click", (e) => {
+    // не считаем клики по кнопкам управления музыкой, чтобы случайно не открывать
+    if (e.target && (e.target.id === "musicBtn")) return;
+
+    taps++;
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => taps = 0, 800);
+
+    if(taps >= 5){
+      taps = 0;
+      openSecret();
+    }
+  });
+
+</script>
+</body>
+</html>
