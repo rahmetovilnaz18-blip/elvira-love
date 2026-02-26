@@ -118,7 +118,7 @@
     .timerLabel{ font-size:12px; color:rgba(244,244,255,.6); margin-top:4px; }
 
     /* Wheel */
-    .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:12px; }
+    .wheelArea{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:22px; }
     .wheelWrap{ width:280px; height:280px; position:relative; }
     .wheel{
       width:100%; height:100%; border-radius:50%;
@@ -126,8 +126,8 @@
       box-shadow: 0 24px 80px rgba(0,0,0,.45);
       background:
         conic-gradient(
-          rgba(255,77,125,.85) 0deg 356.4deg,     /* 99% */
-          rgba(122,92,255,.95) 356.4deg 360deg   /* 1% */
+          rgba(255,77,125,.85) 0deg 348deg,     /* ~96.7% */
+          rgba(122,92,255,.95) 348deg 360deg    /* ~3.3% */
         );
       transform: rotate(0deg);
       transition: transform 4.2s cubic-bezier(.12,.78,.15,1);
@@ -135,15 +135,14 @@
 
     .pointer{
       position:absolute;
-      top:-34px;                /* выше от круга */
+      top:-28px; 
       left:50%;
-      transform: translateX(-50%) rotate(180deg); /* вниз */
+      transform: translateX(-50%) rotate(180deg);
       width:0; height:0;
       border-left:14px solid transparent;
       border-right:14px solid transparent;
       border-bottom:22px solid rgba(255,255,255,.95);
       z-index:10;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
     }
     
     .wheelText{ font-size:13px; color:rgba(244,244,255,.65); max-width:320px; text-align:center; }
@@ -220,12 +219,39 @@
     }
 
     #scanBox{
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+    }
+    #scanBox img{
+      display:block;
+      margin:0 auto;
+      max-width:100%;
+      max-height:100%;
+      border-radius:24px;
+    }
+
+    .iconBtn{
+      all: unset;                 /* сбрасывает общий стиль button */
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      width: 56px;
+      height: 56px;
       display:flex;
       align-items:center;
       justify-content:center;
+      font-size: 28px;
+      cursor: pointer;
+      border-radius: 999px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
     }
-    #scanBox img{
-      margin:0 auto;
+    .iconBtn:active{
+      transform: scale(.88);
     }
     
   </style>
@@ -407,7 +433,7 @@
   <!-- Bottom controls -->
   <div class="bottomBar">
 
-    <button id="secretHeart">❤️</button>
+    <button id="secretHeart" class="iconBtn">❤️</button>
     
     <div class="pillBtn">
       <button id="musicBtn">▶️</button>
@@ -596,7 +622,7 @@
     $("toQuizBtn").style.display = "none";
 
     const turns = 6 + Math.random() * 3; // разное число оборотов
-    const final = 178.5; // всегда сектор "вместе"
+    const final = 354; // всегда сектор "вместе"
 
     $("wheel").style.transition = "none";
     const current = getComputedStyle($("wheel")).transform;
