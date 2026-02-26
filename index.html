@@ -250,7 +250,7 @@
     .sky{
       position:absolute; inset:0;
       z-index:1;
-      pointer-events:none;
+      pointer-events:none !important;
     }
     
     .star{
@@ -298,6 +298,11 @@
       backdrop-filter: blur(18px);
     }
     #s8 .sky{ opacity:.55; }
+
+    .screen{ z-index: 1; }
+    .screen.active{ z-index: 2; }
+    .bottomBar{ z-index: 10000; }
+    .overlay{ z-index: 20000; }
     
   </style>
 </head>
