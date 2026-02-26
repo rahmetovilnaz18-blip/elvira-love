@@ -240,8 +240,14 @@
     .overlay.show{ display:flex; }
 
     /* ===== Final screen effects ===== */
-    #s8{ position:relative; overflow:hidden; }
-    #s8 .card{ position:relative; z-index:2; }
+    #s8{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    #s8 .card{
+      margin: 0 auto;
+    }
     
     .sky{
       position:absolute; inset:0;
@@ -275,6 +281,14 @@
       from{ transform: translateY(20px); opacity:0; }
       10%{ opacity:.8; }
       to{ transform: translateY(-120vh); opacity:0; }
+    }
+    #lovePhrase{
+      font-size: 42px;
+      line-height: 1.1;
+      margin: 0;
+    }
+    @media (max-width: 420px){
+      #lovePhrase{ font-size: 38px; }
     }
     
   </style>
@@ -823,21 +837,17 @@
   
   function startEndless(){
     const phraseEl = document.getElementById("lovePhrase");
-    
-    if(!phraseEl || !signEl) return;
+    if(!phraseEl) return;
   
-    // остановить старый таймер если был
     if(loveTimer) clearInterval(loveTimer);
   
-    // сразу показать
     const show = () => {
       const item = LOVE_PHRASES[loveIdx % LOVE_PHRASES.length];
       phraseEl.textContent = item.t;
-      
       loveIdx++;
     };
-    show();
   
+    show();
     loveTimer = setInterval(show, 2000);
   }
   // ===== Stars + floating hearts for s8 =====
