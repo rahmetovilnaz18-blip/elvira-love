@@ -132,17 +132,20 @@
       transform: rotate(0deg);
       transition: transform 4.2s cubic-bezier(.12,.78,.15,1);
     }
+
     .pointer{
       position:absolute;
-      top:-18px;            /* было -10 → выносим наружу */
+      top:-34px;                /* выше от круга */
       left:50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) rotate(180deg); /* вниз */
       width:0; height:0;
       border-left:14px solid transparent;
       border-right:14px solid transparent;
-      border-bottom:22px solid #fff;
-      z-index:5;
+      border-bottom:22px solid rgba(255,255,255,.95);
+      z-index:10;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
     }
+    
     .wheelText{ font-size:13px; color:rgba(244,244,255,.65); max-width:320px; text-align:center; }
 
     /* Quiz */
@@ -200,9 +203,29 @@
     .overlay.show{ display:flex; }
 
     #secretHeart{
-      font-size:18px;
-      background:none;
-      border:none;
+      position:absolute;
+      left:18px;
+      bottom:18px;
+      width:54px;
+      height:54px;
+      border-radius:999px;
+      font-size:26px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    #secretHeart:active{
+      transform: scale(.88); /* уменьшается при нажатии */
+    }
+
+    #scanBox{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    #scanBox img{
+      margin:0 auto;
     }
     
   </style>
@@ -508,7 +531,7 @@
     if(!dragging) return;
     currentX = x;
     const dx = currentX - startX;
-    card.style.transform = `translateX(${dx}px) rotate(${dx*0.04}deg)`;
+    card.style.transform = `translateX(${dx*0.92}px) rotate(${dx*0.02}deg)`;
     card.style.opacity = String(1 - Math.min(Math.abs(dx)/260, 0.6));
     confHint.textContent = dx < 0 ? "←" : "→";
   }
@@ -517,7 +540,7 @@
     dragging = false;
     const dx = currentX - startX;
     card.style.transition = "transform .25s ease, opacity .25s ease";
-    if(Math.abs(dx) > 80){
+    if(Math.abs(dx) > 110){
       confIndex = (confIndex + (dx < 0 ? 1 : 1)) % CONFESSIONS.length;
       card.style.transform = `translateX(${dx < 0 ? -320 : 320}px) rotate(${dx < 0 ? -12 : 12}deg)`;
       card.style.opacity = "0";
@@ -573,7 +596,7 @@
     $("toQuizBtn").style.display = "none";
 
     const turns = 6 + Math.random() * 3; // разное число оборотов
-    const final = 358.5; // всегда сектор "вместе"
+    const final = 178.5; // всегда сектор "вместе"
 
     $("wheel").style.transition = "none";
     const current = getComputedStyle($("wheel")).transform;
@@ -659,24 +682,19 @@ $("slotSpinBtn").onclick = () => {
 
   // ====== Spoiler Future ======
   $("spoilerBtn").onclick = () => {
-
     const box = $("scanBox");
-
-    box.innerHTML = `<div class="glitch">Генерация…</div>`;
     box.classList.add("loading");
-
+    box.innerHTML = `<div class="glitch">Генерация…</div>`;
+  
     setTimeout(() => {
-
       const img = document.createElement("img");
-      img.src = randItem(FUTURE_IMAGES) + "?" + Date.now(); // важно для обновления
-
+      img.src = randItem(FUTURE_IMAGES) + "?" + Date.now();
       img.onload = () => {
         box.classList.remove("loading");
         box.innerHTML = "";
         box.appendChild(img);
       };
-
-    }, 1200);
+    }, 1000);
   };
 
   // ====== Secret screen: 5 taps anywhere ======
