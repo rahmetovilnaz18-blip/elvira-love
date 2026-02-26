@@ -446,8 +446,7 @@
     <div class="card center">
       <h2 id="lovePhrase">Я люблю тебя</h2>
       <p style="margin-top:8px;">Я найду все разные способы сказать как я тебя люблю</p>
-      <div style="margin-top:14px; font-size:34px;">🤟</div>
-      <div class="tiny" id="signLabel">Язык жестов (ASL): “I love you”</div>
+      
   
       <div class="btnRow">
         <button class="ghost" id="restartBtn">Начать сначала</button>
@@ -824,7 +823,7 @@
   
   function startEndless(){
     const phraseEl = document.getElementById("lovePhrase");
-    const signEl = document.getElementById("signLabel");
+    
     if(!phraseEl || !signEl) return;
   
     // остановить старый таймер если был
@@ -834,7 +833,7 @@
     const show = () => {
       const item = LOVE_PHRASES[loveIdx % LOVE_PHRASES.length];
       phraseEl.textContent = item.t;
-      signEl.textContent = `Язык жестов (ASL): “I love you” 🤟 · сейчас: ${item.l}`;
+      
       loveIdx++;
     };
     show();
