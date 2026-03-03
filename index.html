@@ -318,6 +318,40 @@
       margin: 0;
       max-width: 480px;
     }
+    /* ===== Jackpot effect ===== */
+
+    .flash {
+      position: fixed;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      animation: flashAnim .4s ease;
+      z-index: 9999;
+    }
+    
+    @keyframes flashAnim {
+      0% { opacity: 0; }
+      20% { opacity: .9; }
+      100% { opacity: 0; }
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 14px;
+      top: -20px;
+      z-index: 9998;
+      opacity: .9;
+      animation: fall linear forwards;
+    }
+    
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -567,11 +601,17 @@
   function showScreen(id){
     screens.forEach(s => s.classList.toggle("active", s.id === id));
     if (navigator.vibrate) navigator.vibrate(10);
-    
-
+  
+    if(id === "s8"){
+      startHearts();
+      startEndless();
+    } else {
+      stopHearts();
+    }
+  
     const last = historyStack[historyStack.length - 1];
     if (last !== id) historyStack.push(id);
-
+  
     $("backBtn").style.display = historyStack.length > 1 ? "inline-block" : "none";
   }
 
@@ -766,6 +806,7 @@
 
         let msg = "Выбить тут что-то действительно сложно...";
         if(a === b && b === c){
+          jackpotEffect();
           if(a === "💍") msg = "ДЖЕКПОТ 💍 Хмм что же это)))";
           else if(a === "✈️") msg = "ДЖЕКПОТ ✈️ Скоро путешествие мечты!";
           else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 С меня дом)";
@@ -783,7 +824,30 @@
       }
     }, 80);
   };
-
+  function jackpotEffect(){
+    // вспышка
+    const flash = document.createElement("div");
+    flash.className = "flash";
+    document.body.appendChild(flash);
+    setTimeout(()=> flash.remove(), 400);
+  
+    // вибрация
+    if(navigator.vibrate){
+      navigator.vibrate([100,50,100]);
+    }
+  
+    // конфетти
+    const colors = ["#ff4d7d","#7a5cff","#ffd700","#00eaff","#ffffff"];
+    for(let i=0;i<40;i++){
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random()*100 + "vw";
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration = (2 + Math.random()*2) + "s";
+      document.body.appendChild(c);
+      setTimeout(()=> c.remove(), 4000);
+    }
+  }
   // ====== Spoiler Future ======
   $("spoilerBtn").onclick = () => {
     const box = $("scanBox");
@@ -940,9 +1004,6 @@
 
   $("toEndBtn").onclick = () => {
     showScreen("s8");
-    buildStars();
-    startHearts();
-    startEndless();
   };
 
   $("restartBtn").onclick = () => {
@@ -950,7 +1011,7 @@
     setTimeout(() => location.reload(), 300);
   };
   buildStars();
-  startHearts();
+  
 </script>
 </body>
 </html>
