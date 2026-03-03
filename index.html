@@ -260,8 +260,9 @@
 
     .sky{
       position:absolute; inset:0;
-      z-index:0;
+      z-index:1;
       pointer-events:none;
+      opacity:.60;
     }
 
     .star{
@@ -301,6 +302,19 @@
     }
     @media (max-width: 420px){
       #lovePhrase{ font-size: 38px; }
+    }
+
+    /* Фото всегда выше фона */
+    #s7 .scan{
+      position:relative;
+      z-index:3;
+    }
+    
+    #s7 .scan img{
+      position:relative;
+      z-index:3;
+      opacity:1;
+      filter:none;
     }
     /* Center love block perfectly */
     #s8 .loveBlock{
