@@ -333,13 +333,13 @@
   <!-- 1: Welcome -->
   <section class="screen active" id="s1">
     <div class="card center">
-      <div class="tiny">Секретный сайт только для тебя</div>
+      
       <h1><span id="typeName"></span> ❤️</h1>
-      <p>У меня есть одна интерактивная штука… и она вся про то, как сильно я тебя люблю.</p>
+      <p>Наверняка ты задумывалась над вопросом:</p>
       <div class="btnRow">
         <button class="primary" id="startBtn">Почему я люблю тебя?</button>
       </div>
-      <div class="tiny">Подсказка: свайпай и нажимай — тут много сюрпризов</div>
+      
     </div>
   </section>
 
@@ -442,7 +442,7 @@
   <section class="screen" id="s6">
     <div class="card center">
       <h2>Игровой автомат 🎰</h2>
-      <p>Везение тут тоже не случайно.</p>
+      
 
       <div class="slotRow">
         <div class="slot"><span id="slotA" style="font-size:42px;">❓</span></div>
@@ -482,8 +482,6 @@
         <button class="primary" id="spoilerBtn">Спойлер</button>
         <button class="ghost" id="toEndBtn" style="display:none;">Дальше…</button>
       </div>
-
-      <div class="tiny">P.S. секретный экран открывается сердечком ❤️ (нажми 5 раз)</div>
     </div>
   </section>
 
@@ -536,11 +534,13 @@
   const CONFESSIONS = [
     "Ты — мой уют.",
     "С тобой мир становится добрее.",
-    "Твоя улыбка — моя слабость.",
-    "Я горжусь тобой.",
+    "Твоя улыбка ослепит солнце.",
+    "Обожаю тебя.",
     "Мне хорошо просто рядом.",
     "Я выбираю тебя каждый день.",
-    "Ты — моё любимое «всегда»."
+    "Ты — моё любимое «всегда».",
+    "Просто невозможно быть милее, чем ты!",
+    "Ты неповторима и совершенна."
   ];
 
   const QUIZ = [
@@ -718,7 +718,7 @@
     $("wheel").style.transform = `rotate(${wheelAngle}deg)`;
 
     setTimeout(() => {
-      $("wheelResult").textContent = "Итог один: вместе навсегда 💜";
+      $("wheelResult").textContent = "Итог один: судьба всегда будет на нашей стороне 💜";
       $("toQuizBtn").style.display = "inline-block";
       btn.disabled = false;
     }, 4200);
@@ -745,7 +745,7 @@
   $("ansNo").onclick = answer;
 
   // ====== Slot ======
-  const SLOT_ITEMS = ["❤️","💖","💋","💍","🏡","✈️","🌙","⭐️","🍕","🎬","🌹"];
+  const SLOT_ITEMS = ["❤️","💍","🏡","✈️","⭐️","🍕","🎬","🌹"];
 
   $("slotSpinBtn").onclick = () => {
     const btn = $("slotSpinBtn");
@@ -769,14 +769,14 @@
         $("slotB").textContent = b;
         $("slotC").textContent = c;
 
-        let msg = "Мне нравится любая комбинация, если ты рядом ❤️";
+        let msg = "Выбить тут что-то действительно сложно...";
         if(a === b && b === c){
           if(a === "💍") msg = "ДЖЕКПОТ 💍 Это знак: мы навсегда вместе.";
           else if(a === "✈️") msg = "ДЖЕКПОТ ✈️ Скоро путешествие мечты!";
-          else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 Наш дом — это мы.";
-          else msg = "ДЖЕКПОТ 💘 Ты — мой главный выигрыш.";
+          else if(a === "🏡") msg = "ДЖЕКПОТ 🏡 С меня дом)";
+          else if(a === "❤️") msg = "ДЖЕКПОТ ❤️ Ты — мой главный выигрыш.";
         } else if(a === b || b === c || a === c){
-          msg = "Почти джекпот 😄 Но главный приз — ты.";
+          msg = "Почти джекпот 😄 Но хоть что-то)";
         }
 
         $("payoutText").textContent = msg;
