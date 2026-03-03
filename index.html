@@ -237,16 +237,11 @@
 
     /* ===== Final screen effects ===== */
     #s8{
-            /* вместо absolute */
       inset: 0;
-      padding: 0;           /* убираем отступы */
-      height: 100dvh;       /* правильная высота на мобилках */
-      width: 100vw;
+      padding: 18px 18px 92px;
       display:flex;
       align-items:center;
       justify-content:center;
-      position:fixed;
-      overflow:hidden;
     }
     #s8 .card{
       margin: auto;
@@ -328,6 +323,7 @@
 
 <body>
 <div class="app" id="app">
+  <div class="sky" id="sky"></div>
   <button id="backBtn" class="backBtn" style="display:none;">← Назад</button>
 
   <!-- 1: Welcome -->
@@ -371,7 +367,7 @@
       <div class="grid3">
         <div class="timerBox">
           <div class="timerBig" id="relTimer">—</div>
-          <div class="timerLabel">с 13.10.2024</div>
+          <div class="timerLabel">с 13.10.2024 21:45</div>
         </div>
 
         <div class="timerBox">
@@ -482,7 +478,7 @@
 
   <!-- 8: Endless love -->
   <section class="screen" id="s8">
-    <div class="sky" id="sky"></div>
+    
     <div class="card center">
       <div class="loveBlock">
         <h2 id="lovePhrase">Я люблю тебя</h2>
@@ -571,7 +567,7 @@
   function showScreen(id){
     screens.forEach(s => s.classList.toggle("active", s.id === id));
     if (navigator.vibrate) navigator.vibrate(10);
-    if(id !== "s8") stopHearts();
+    
 
     const last = historyStack[historyStack.length - 1];
     if (last !== id) historyStack.push(id);
@@ -953,7 +949,8 @@
     document.body.style.opacity = "0";
     setTimeout(() => location.reload(), 300);
   };
-  
+  buildStars();
+  startHearts();
 </script>
 </body>
 </html>
