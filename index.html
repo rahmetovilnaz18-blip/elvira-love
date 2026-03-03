@@ -47,6 +47,8 @@
       box-shadow:var(--shadow);
       backdrop-filter: blur(10px);
       padding:20px;
+      position:relative;
+      z-index:2;
     }
     .card + .card{ margin-top:14px; background:var(--card2); }
     h1{ margin:0 0 10px; font-size:34px; letter-spacing:.2px; }
@@ -218,6 +220,8 @@
       object-position:center center;
       display:block;
       margin:0 auto;
+      opacity:1;
+      filter:none;
     }
     .glitch{
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -256,9 +260,8 @@
 
     .sky{
       position:absolute; inset:0;
-      z-index:1;
+      z-index:0;
       pointer-events:none;
-      opacity:.60;
     }
 
     .star{
