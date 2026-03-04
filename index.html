@@ -801,45 +801,41 @@
     overlay.className = "kiss-cover";
     document.body.appendChild(overlay);
   
-    const COUNT = 25;               // сколько поцелуев
-    const COLS = 5;                 // 5 x 5 сетка
-    const ROWS = 5;
+    const COUNT = 25;
   
     const vw = window.innerWidth;
     const vh = window.innerHeight;
   
-    const cellW = vw / COLS;
-    const cellH = vh / ROWS;
+    // базовый размер — чтобы перекрывали экран
+    const baseSize = Math.max(vw, vh) / 5;
   
-    // размер под ячейку (чтобы красиво закрывало)
-    const baseSize = Math.max(cellW, cellH) * 0.9;
+    for(let i = 0; i < COUNT; i++){
   
-    for(let r = 0; r < ROWS; r++){
-      for(let c = 0; c < COLS; c++){
+      const kiss = document.createElement("div");
+      kiss.className = "kiss-cell";
+      kiss.textContent = "💋";
   
-        const kiss = document.createElement("div");
-        kiss.className = "kiss-cell";
-        kiss.textContent = "💋";
+      // случайная позиция
+      const x = Math.random() * vw;
+      const y = Math.random() * vh;
   
-        const x = c * cellW + cellW / 2;
-        const y = r * cellH + cellH / 2;
+      kiss.style.left = x + "px";
+      kiss.style.top  = y + "px";
   
-        kiss.style.left = x + "px";
-        kiss.style.top  = y + "px";
-        kiss.style.fontSize = baseSize + "px";
+      // небольшой разброс размера
+      const sizeVariation = baseSize * (0.8 + Math.random() * 0.4);
+      kiss.style.fontSize = sizeVariation + "px";
   
-        // лёгкий рандом задержки, чтобы не одновременно
-        kiss.style.animationDelay = (Math.random() * 0.15) + "s";
+      // случайная задержка
+      kiss.style.animationDelay = (Math.random() * 0.2) + "s";
   
-        overlay.appendChild(kiss);
-      }
+      overlay.appendChild(kiss);
     }
   
     if(navigator.vibrate){
       navigator.vibrate([20,40,20]);
     }
   
-    // после анимации удаляем и делаем переход
     setTimeout(()=>{
       overlay.remove();
       if(callback) callback();
