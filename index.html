@@ -585,11 +585,42 @@
     "Ты неповторима и совершенна."
   ];
 
-  const QUIZ = [
-    { q: "Ильназ любит тебя?", punch: "Неправильно. Он не любит. Он обожает тебя ❤️" },
-    { q: "Кто самая красивая?", punch: "Оба варианта неверные. Правильный ответ — Эльвира 💘" },
-    { q: "Кто моя судьба?", punch: "Неверно. Судьба — это ты. И точка." },
-    { q: "Кого я хочу обнять прямо сейчас?", punch: "Неправильно. Потому что я хочу обнять тебя." }
+  const QUIZ = [ 
+    {
+      q: "Что я люблю в целом?",
+      yesText: "Молоко",
+      noText: "Мясо",
+      yes: "Неправильно, тебя ❤️",
+      no:  "Неправильно, тебя ❤️"
+    },
+    {
+      q: "Нужен ли мне гугл?",
+      yesText: "Да",
+      noText: "Нет",
+      yes: "Нет, ведь ты всё что я искал 💘",
+      no:  "Правильно, ведь ты всё что я искал 💘"
+    },
+    {
+      q: "Чего я люблю много?",
+      yesText: "Еды",
+      noText: "Денег",
+      yes: "Неправильно, тебя ❤️",
+      no:  "Неправильно, тебя ❤️"
+    },
+    {
+      q: "Ты случайно не сера, кислород и кальций?",
+      yesText: "Да",
+      noText: "Нет",
+      yes: "Тогда понятно почему ты такая SOSCa 😏",
+      no:  "Тогда почему ты такая SOSCa 😏"
+    },
+    {
+      q: "Я люблю тебя?",
+      yesText: "Да",
+      noText: "Нет",
+      yes: "Неправильно. Я не люблю, а обожаю тебя ❤️",
+      no:  "Правильно. Я не люблю, а обожаю тебя ❤️"
+    }
   ];
 
   const FUTURE_IMAGES = [
@@ -779,19 +810,33 @@
   // ====== Quiz ======
   let qIndex = 0;
   function renderQ(){
-    $("qText").textContent = QUIZ[qIndex].q;
+    const current = QUIZ[qIndex];
+  
+    $("qText").textContent = current.q;
+    $("ansYes").textContent = current.yesText;
+    $("ansNo").textContent = current.noText;
+  
     $("qResult").style.display = "none";
     $("luckBtn").style.display = "none";
-    $("qHint").textContent = "Выбери любой вариант 😄";
+    $("qHint").textContent = "Выбери вариант 😄";
   }
   renderQ();
 
-  function answer(){
+  function answer(isYes){
     $("qResult").style.display = "block";
-    $("qResult").innerHTML = `<span>Неправильно.</span> ${QUIZ[qIndex].punch}`;
+  
+    const current = QUIZ[qIndex];
+    const text = isYes ? current.yes : current.no;
+  
+    $("qResult").innerHTML = `<span>Ответ:</span> ${text}`;
     $("luckBtn").style.display = "inline-block";
     $("qHint").textContent = "Идём дальше 😉";
-    qIndex = (qIndex + 1) % QUIZ.length;
+  
+    qIndex++;
+  
+    if(qIndex < QUIZ.length){
+      setTimeout(renderQ, 800);
+    }
   }
   $("ansYes").onclick = answer;
   $("ansNo").onclick = answer;
