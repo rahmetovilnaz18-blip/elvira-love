@@ -550,7 +550,7 @@
       <div class="scan" id="scanBox">
         <div class="glitch" id="scanText">Готов к генерации…</div>
       </div>
-
+      <div class="future-caption" id="futureCaption"></div>
       <div class="btnRow">
         <button class="primary" id="spoilerBtn">Спойлер</button>
         <button class="ghost" id="toEndBtn" style="display:none;">Дальше…</button>
@@ -1016,6 +1016,7 @@
   // ====== Spoiler Future ======
   $("spoilerBtn").onclick = () => {
     const box = $("scanBox");
+    $("futureCaption").textContent = "";
     box.classList.add("loading");
 
     let pct = 0;
@@ -1041,13 +1042,7 @@
           box.classList.remove("loading");
           box.innerHTML = "";
           box.appendChild(img);
-        
-          // создаём подпись
-          const caption = document.createElement("div");
-          caption.className = "future-caption";
-          caption.textContent = item.caption;
-          box.parentNode.insertBefore(caption, box.nextSibling);
-        
+          $("futureCaption").textContent = item.caption;
           $("toEndBtn").style.opacity = "0";
           $("toEndBtn").style.display = "inline-block";
           setTimeout(()=> $("toEndBtn").style.opacity = "1", 50);
