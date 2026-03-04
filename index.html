@@ -399,29 +399,37 @@
     @keyframes fadeInCaption{
       to { opacity: 1; }
     }
-    /* ===== Kiss burst effect ===== */
+    /* ===== Kiss full-screen reveal ===== */
 
-    .kiss-burst{
+    .kiss-screen{
       position: fixed;
-      font-size: 0px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 100vmax;           /* гарантированно перекрывает весь экран */
+      line-height: 1;
       pointer-events: none;
-      z-index: 9999;
-      animation: kissGrow 0.9s ease-out forwards;
+      z-index: 10000;
+      opacity: 0;
+      animation: kissFull 1.6s ease forwards;
     }
     
-    @keyframes kissGrow{
+    @keyframes kissFull{
       0%{
-        font-size: 0px;
+        transform: translate(-50%, -50%) scale(0);
         opacity: 0;
-        transform: scale(0.5);
       }
-      30%{
+      35%{
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      65%{                          /* фиксация ~0.5с */
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
       }
       100%{
-        font-size: 42px;
+        transform: translate(-50%, -50%) scale(1.15);
         opacity: 0;
-        transform: scale(1.3);
       }
     }
   </style>
@@ -784,30 +792,21 @@
   });
   function kissEffect(callback){
   
-    const count = 35;
+    const kiss = document.createElement("div");
+    kiss.className = "kiss-screen";
+    kiss.textContent = "💋";
   
-    for(let i=0;i<count;i++){
-      const kiss = document.createElement("div");
-      kiss.className = "kiss-burst";
-      kiss.textContent = "💋";
-  
-      kiss.style.left = Math.random()*100 + "vw";
-      kiss.style.top  = Math.random()*100 + "vh";
-  
-      kiss.style.animationDelay = (Math.random()*0.2) + "s";
-  
-      document.body.appendChild(kiss);
-  
-      setTimeout(()=> kiss.remove(), 1000);
-    }
+    document.body.appendChild(kiss);
   
     if(navigator.vibrate){
-      navigator.vibrate(25);
+      navigator.vibrate([20, 40, 20]);
     }
   
-    setTimeout(()=>{
+    // удалить после завершения анимации и сделать переход
+    setTimeout(() => {
+      kiss.remove();
       if(callback) callback();
-    }, 800);
+    }, 1600); // совпадает с длительностью анимации
   }
   // ====== Navigation ======
   $("startBtn").onclick = () => {
