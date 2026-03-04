@@ -479,6 +479,7 @@
       </div>
 
       <div class="btnRow">
+        <button class="primary" id="nextQuestionBtn" style="display:none;">Следующий вопрос</button>
         <button class="primary" id="luckBtn" style="display:none;">Попытать удачу</button>
       </div>
       <div class="tiny" id="qHint">Выбери любой вариант 😄</div>
@@ -817,7 +818,9 @@
     $("ansNo").textContent = current.noText;
   
     $("qResult").style.display = "none";
+    $("nextQuestionBtn").style.display = "none";
     $("luckBtn").style.display = "none";
+  
     $("qHint").textContent = "Выбери вариант 😄";
   }
   renderQ();
@@ -829,15 +832,19 @@
     const text = isYes ? current.yes : current.no;
   
     $("qResult").innerHTML = `<span>Ответ:</span> ${text}`;
-    $("luckBtn").style.display = "inline-block";
-    $("qHint").textContent = "Идём дальше 😉";
+    $("qHint").textContent = "😉";
   
-    qIndex++;
-  
-    if(qIndex < QUIZ.length){
-      setTimeout(renderQ, 800);
+    // если это последний вопрос
+    if(qIndex === QUIZ.length - 1){
+      $("luckBtn").style.display = "inline-block";
+    } else {
+      $("nextQuestionBtn").style.display = "inline-block";
     }
   }
+  $("nextQuestionBtn").onclick = () => {
+    qIndex++;
+    renderQ();
+  };
   $("ansYes").onclick = answer;
   $("ansNo").onclick = answer;
 
