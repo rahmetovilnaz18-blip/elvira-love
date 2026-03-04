@@ -384,8 +384,8 @@
     }
     /* выбранный вариант */
     .answer-selected{
-      transform: scale(1.05);
-      box-shadow: 0 0 18px rgba(255,255,255,.4);
+      border: 2px solid #ffffff !important;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.6);
     }
   </style>
 </head>
@@ -854,7 +854,7 @@
   renderQ();
 
   function answer(isYes){
-
+  
     const current = QUIZ[qIndex];
     const yesBtn = $("ansYes");
     const noBtn  = $("ansNo");
@@ -863,17 +863,17 @@
     yesBtn.disabled = true;
     noBtn.disabled = true;
   
-    // убираем старые цвета
-    yesBtn.classList.remove("answer-correct","answer-wrong");
-    noBtn.classList.remove("answer-correct","answer-wrong");
+    // очищаем классы
+    yesBtn.classList.remove("answer-correct","answer-wrong","answer-selected");
+    noBtn.classList.remove("answer-correct","answer-wrong","answer-selected");
   
-    const chosen = isYes ? "yes" : "no";
-    // подсветка выбранной кнопки
-    if(isYes){
-      yesBtn.classList.add("answer-selected");
-    } else {
-      noBtn.classList.add("answer-selected");
-    }
+    // определяем выбранную кнопку
+    const selectedBtn = isYes ? yesBtn : noBtn;
+    const otherBtn = isYes ? noBtn : yesBtn;
+  
+    // выделяем выбранную
+    selectedBtn.classList.add("answer-selected");
+  
     // если есть правильный ответ
     if(current.correct){
   
@@ -891,13 +891,13 @@
       noBtn.classList.add("answer-wrong");
     }
   
-    // текст ответа
-    const text = isYes ? current.yes : current.no;
+    // ТЕКСТ СТРОГО ПО ВЫБРАННОМУ ВАРИАНТУ
+    const responseText = isYes ? current.yes : current.no;
   
     $("qResult").style.display = "block";
-    $("qResult").innerHTML = text;
+    $("qResult").textContent = responseText;
   
-    // логика следующей кнопки
+    // показываем кнопку дальше
     if(qIndex === QUIZ.length - 1){
       $("luckBtn").style.display = "inline-block";
     } else {
@@ -908,8 +908,8 @@
     qIndex++;
     renderQ();
   };
-  $("ansYes").onclick = answer;
-  $("ansNo").onclick = answer;
+  $("ansYes").onclick = () => answer(true);
+  $("ansNo").onclick  = () => answer(false);
 
   // ====== Slot ======
   const SLOT_ITEMS = ["❤️","💍","🏡","✈️","⭐️","🍕","🎬","🌹"];
