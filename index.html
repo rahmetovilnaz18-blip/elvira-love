@@ -382,6 +382,11 @@
       border-color: #c53030 !important;
       color: white !important;
     }
+    /* выбранный вариант */
+    .answer-selected{
+      transform: scale(1.05);
+      box-shadow: 0 0 18px rgba(255,255,255,.4);
+    }
   </style>
 </head>
 
@@ -611,7 +616,8 @@
       q: "Нужен ли мне гугл?",
       yesText: "Да",
       noText: "Нет",
-      yes: "Нет, ведь ты всё что я искал 💘",
+      correct: "no",
+      yes: "Неправильно, ведь ты всё что я искал 💘",
       no:  "Правильно, ведь ты всё что я искал 💘"
     },
     {
@@ -625,8 +631,9 @@
       q: "Ты случайно не сера, кислород и кальций?",
       yesText: "Да",
       noText: "Нет",
-      yes: "Тогда понятно почему ты такая SOSCa 😏",
-      no:  "Тогда почему ты такая SOSCa 😏"
+      correct: "yes",
+      yes: "Правильно, ты же такая SOSCa 😏",
+      no:  "Неправильно, тогда почему ты такая SOSCa? 😏"
     },
     {
       q: "Я люблю тебя?",
@@ -837,8 +844,8 @@
     yesBtn.disabled = false;
     noBtn.disabled = false;
   
-    yesBtn.classList.remove("answer-correct","answer-wrong");
-    noBtn.classList.remove("answer-correct","answer-wrong");
+    yesBtn.classList.remove("answer-correct","answer-wrong","answer-selected");
+    noBtn.classList.remove("answer-correct","answer-wrong","answer-selected");
   
     $("qResult").style.display = "none";
     $("nextQuestionBtn").style.display = "none";
@@ -861,7 +868,12 @@
     noBtn.classList.remove("answer-correct","answer-wrong");
   
     const chosen = isYes ? "yes" : "no";
-  
+    // подсветка выбранной кнопки
+    if(isYes){
+      yesBtn.classList.add("answer-selected");
+    } else {
+      noBtn.classList.add("answer-selected");
+    }
     // если есть правильный ответ
     if(current.correct){
   
