@@ -369,6 +369,19 @@
         opacity: 0;
       }
     }
+    /* ===== Quiz answer colors ===== */
+
+    .answer-correct{
+      background: #1f9d55 !important;
+      border-color: #1f9d55 !important;
+      color: white !important;
+    }
+    
+    .answer-wrong{
+      background: #c53030 !important;
+      border-color: #c53030 !important;
+      color: white !important;
+    }
   </style>
 </head>
 
@@ -619,6 +632,7 @@
       q: "Я люблю тебя?",
       yesText: "Да",
       noText: "Нет",
+      correct: "no",
       yes: "Неправильно. Я не люблю, а обожаю тебя ❤️",
       no:  "Правильно. Я не люблю, а обожаю тебя ❤️"
     }
@@ -817,24 +831,61 @@
     $("ansYes").textContent = current.yesText;
     $("ansNo").textContent = current.noText;
   
+    const yesBtn = $("ansYes");
+    const noBtn  = $("ansNo");
+  
+    yesBtn.disabled = false;
+    noBtn.disabled = false;
+  
+    yesBtn.classList.remove("answer-correct","answer-wrong");
+    noBtn.classList.remove("answer-correct","answer-wrong");
+  
     $("qResult").style.display = "none";
     $("nextQuestionBtn").style.display = "none";
     $("luckBtn").style.display = "none";
-  
-    $("qHint").textContent = "Выбери вариант 😄";
   }
   renderQ();
 
   function answer(isYes){
-    $("qResult").style.display = "block";
-  
+
     const current = QUIZ[qIndex];
+    const yesBtn = $("ansYes");
+    const noBtn  = $("ansNo");
+  
+    // блокируем кнопки
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+  
+    // убираем старые цвета
+    yesBtn.classList.remove("answer-correct","answer-wrong");
+    noBtn.classList.remove("answer-correct","answer-wrong");
+  
+    const chosen = isYes ? "yes" : "no";
+  
+    // если есть правильный ответ
+    if(current.correct){
+  
+      if(current.correct === "yes"){
+        yesBtn.classList.add("answer-correct");
+        noBtn.classList.add("answer-wrong");
+      } else {
+        noBtn.classList.add("answer-correct");
+        yesBtn.classList.add("answer-wrong");
+      }
+  
+    } else {
+      // если правильного нет — обе красные
+      yesBtn.classList.add("answer-wrong");
+      noBtn.classList.add("answer-wrong");
+    }
+  
+    // текст ответа
     const text = isYes ? current.yes : current.no;
   
-    $("qResult").innerHTML = `<span>Ответ:</span> ${text}`;
-    $("qHint").textContent = "😉";
+    $("qResult").style.display = "block";
+    $("qResult").innerHTML = text;
   
-    // если это последний вопрос
+    // логика следующей кнопки
     if(qIndex === QUIZ.length - 1){
       $("luckBtn").style.display = "inline-block";
     } else {
