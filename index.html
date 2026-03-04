@@ -399,22 +399,26 @@
     @keyframes fadeInCaption{
       to { opacity: 1; }
     }
-    /* ===== Kiss full-screen reveal ===== */
+    /* ===== Kiss grid full-cover ===== */
 
-    .kiss-screen{
+    .kiss-cover{
       position: fixed;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: 100vmax;           /* гарантированно перекрывает весь экран */
-      line-height: 1;
+      inset: 0;
       pointer-events: none;
       z-index: 10000;
-      opacity: 0;
-      animation: kissFull 1.6s ease forwards;
     }
     
-    @keyframes kissFull{
+    .kiss-cell{
+      position: absolute;
+      left: 0; top: 0;
+      font-size: 0px;
+      line-height: 1;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      animation: kissCellAnim 1.8s ease forwards;
+    }
+    
+    @keyframes kissCellAnim{
       0%{
         transform: translate(-50%, -50%) scale(0);
         opacity: 0;
@@ -423,12 +427,12 @@
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
       }
-      65%{                          /* фиксация ~0.5с */
+      65%{               /* фиксация ~0.5с */
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
       }
       100%{
-        transform: translate(-50%, -50%) scale(1.15);
+        transform: translate(-50%, -50%) scale(1.1);
         opacity: 0;
       }
     }
@@ -636,7 +640,8 @@
   // ====== Settings ======
   const GIRL_NAME = "Эльвира";
   const REL_START = "2024-10-13T21:45:00";
-
+  let kissPlayed = false;
+  
   const CONFESSIONS = [
     "Ты — мой уют.",
     "С тобой мир становится добрее.",
@@ -791,26 +796,65 @@
     }
   });
   function kissEffect(callback){
+
+    const overlay = document.createElement("div");
+    overlay.className = "kiss-cover";
+    document.body.appendChild(overlay);
   
-    const kiss = document.createElement("div");
-    kiss.className = "kiss-screen";
-    kiss.textContent = "💋";
+    const COUNT = 25;               // сколько поцелуев
+    const COLS = 5;                 // 5 x 5 сетка
+    const ROWS = 5;
   
-    document.body.appendChild(kiss);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
   
-    if(navigator.vibrate){
-      navigator.vibrate([20, 40, 20]);
+    const cellW = vw / COLS;
+    const cellH = vh / ROWS;
+  
+    // размер под ячейку (чтобы красиво закрывало)
+    const baseSize = Math.max(cellW, cellH) * 0.9;
+  
+    for(let r = 0; r < ROWS; r++){
+      for(let c = 0; c < COLS; c++){
+  
+        const kiss = document.createElement("div");
+        kiss.className = "kiss-cell";
+        kiss.textContent = "💋";
+  
+        const x = c * cellW + cellW / 2;
+        const y = r * cellH + cellH / 2;
+  
+        kiss.style.left = x + "px";
+        kiss.style.top  = y + "px";
+        kiss.style.fontSize = baseSize + "px";
+  
+        // лёгкий рандом задержки, чтобы не одновременно
+        kiss.style.animationDelay = (Math.random() * 0.15) + "s";
+  
+        overlay.appendChild(kiss);
+      }
     }
   
-    // удалить после завершения анимации и сделать переход
-    setTimeout(() => {
-      kiss.remove();
+    if(navigator.vibrate){
+      navigator.vibrate([20,40,20]);
+    }
+  
+    // после анимации удаляем и делаем переход
+    setTimeout(()=>{
+      overlay.remove();
       if(callback) callback();
-    }, 1600); // совпадает с длительностью анимации
+    }, 1800);
   }
   // ====== Navigation ======
   $("startBtn").onclick = () => {
-    kissEffect(() => showScreen("s2"));
+  
+    if(!kissPlayed){
+      kissPlayed = true;
+      kissEffect(() => showScreen("s2"));
+    } else {
+      showScreen("s2");
+    }
+  
   };
   $("thinkBtn").onclick = () => showScreen("s3");
   $("fateBtn").onclick = () => showScreen("s4");
