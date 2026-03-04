@@ -399,6 +399,29 @@
     @keyframes fadeInCaption{
       to { opacity: 1; }
     }
+    /* ===== Kiss effect ===== */
+
+    .kiss{
+      position: fixed;
+      font-size: 26px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: kissFly 0.9s ease-out forwards;
+    }
+    
+    @keyframes kissFly{
+      0%{
+        transform: scale(0.5) translateY(20px);
+        opacity: 0;
+      }
+      30%{
+        opacity: 1;
+      }
+      100%{
+        transform: scale(1.4) translateY(-120px) rotate(20deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -684,7 +707,7 @@
     },
     {
       src: "assets/future7.jpg",
-      caption: "Просто гуляем по парку👪🌳"
+      caption: "Просто гуляем по парку🌳"
     }
   ];
 
@@ -757,9 +780,38 @@
       $("musicLabel").textContent = "Нажми ещё раз (браузер требует действие)";
     }
   });
-
+  function kissEffect(callback){
+  
+    const kisses = 25;
+  
+    for(let i=0;i<kisses;i++){
+      const kiss = document.createElement("div");
+      kiss.className = "kiss";
+      kiss.textContent = "💋";
+  
+      kiss.style.left = Math.random()*100 + "vw";
+      kiss.style.top  = (60 + Math.random()*30) + "vh";
+  
+      kiss.style.animationDelay = (Math.random()*0.3) + "s";
+  
+      document.body.appendChild(kiss);
+  
+      setTimeout(()=> kiss.remove(), 1000);
+    }
+  
+    if(navigator.vibrate){
+      navigator.vibrate(30);
+    }
+  
+    // переход после анимации
+    setTimeout(()=>{
+      if(callback) callback();
+    }, 800);
+  }
   // ====== Navigation ======
-  $("startBtn").onclick = () => showScreen("s2");
+  $("startBtn").onclick = () => {
+    kissEffect(() => showScreen("s2"));
+  };
   $("thinkBtn").onclick = () => showScreen("s3");
   $("fateBtn").onclick = () => showScreen("s4");
   $("toQuizBtn").onclick = () => showScreen("s5");
